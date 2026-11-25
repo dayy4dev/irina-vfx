@@ -1,5 +1,5 @@
 ---
-name: irina-fx
+name: irina-vfx
 description: Build, change or wire in a UI control that reacts like anime (squash and overshoot on springs, drawn smoke, impact bursts, slashes and splashes, manga sound-effect lettering), using the IrinaVFX core. Use when asked to add one of the irina-* components to an app, to change how one reacts, to re-theme them, or to make a new control in the same style. Covers the core's effects, the rules the set follows, and the frame-by-frame look that has to happen before calling it done.
 ---
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "irina-fx",
-  "homepage": "https://github.com/dayy4dev/irina-fx",
+  "name": "irina-vfx",
+  "homepage": "https://github.com/dayy4dev/irina-vfx",
   "items": [
     {
       "name": "button",
@@ -18,10 +18,10 @@
         {
           "path": "button/button.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/button.js"
+          "target": "~/public/irina-vfx/button.js"
         }
       ],
-      "docs": "Irina Button is a plain script that registers a custom element. Load /irina-fx/button.js with a script tag (not a module), then use <irina-button>Confirm</irina-button> (variant=\"secondary\" for the quiet one). Listen for click; call el.done() when the action worked to land a check on it. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Button is a plain script that registers a custom element. Load /irina-vfx/button.js with a script tag (not a module), then use <irina-button>Confirm</irina-button> (variant=\"secondary\" for the quiet one). Listen for click; call el.done() when the action worked to land a check on it. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "toggle",
@@ -39,10 +39,10 @@
         {
           "path": "toggle/toggle.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/toggle.js"
+          "target": "~/public/irina-vfx/toggle.js"
         }
       ],
-      "docs": "Irina Toggle is a plain script that registers a custom element. Load /irina-fx/toggle.js with a script tag (not a module), then use <irina-toggle label=\"Notifications\"></irina-toggle>. Read el.checked and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Toggle is a plain script that registers a custom element. Load /irina-vfx/toggle.js with a script tag (not a module), then use <irina-toggle label=\"Notifications\"></irina-toggle>. Read el.checked and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "slider",
@@ -60,10 +60,10 @@
         {
           "path": "slider/slider.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/slider.js"
+          "target": "~/public/irina-vfx/slider.js"
         }
       ],
-      "docs": "Irina Slider is a plain script that registers a custom element. Load /irina-fx/slider.js with a script tag (not a module), then use <irina-slider value=\"30\" label=\"Volume\"></irina-slider>, with min, max, step and unit. Read el.value; it fires input and change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Slider is a plain script that registers a custom element. Load /irina-vfx/slider.js with a script tag (not a module), then use <irina-slider value=\"30\" label=\"Volume\"></irina-slider>, with min, max, step and unit. Read el.value; it fires input and change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "checkbox",
@@ -81,10 +81,10 @@
         {
           "path": "checkbox/checkbox.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/checkbox.js"
+          "target": "~/public/irina-vfx/checkbox.js"
         }
       ],
-      "docs": "Irina Checkbox is a plain script that registers a custom element. Load /irina-fx/checkbox.js with a script tag (not a module), then use <irina-checkbox>Remember me</irina-checkbox>. Read el.checked and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Checkbox is a plain script that registers a custom element. Load /irina-vfx/checkbox.js with a script tag (not a module), then use <irina-checkbox>Remember me</irina-checkbox>. Read el.checked and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "radio",
@@ -102,10 +102,10 @@
         {
           "path": "radio/radio.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/radio.js"
+          "target": "~/public/irina-vfx/radio.js"
         }
       ],
-      "docs": "Irina Radio is a plain script that registers a custom element. Load /irina-fx/radio.js with a script tag (not a module), then use <irina-radio label=\"Plan\"><option value=\"a\" selected>Option A</option><option value=\"b\">Option B</option></irina-radio>. Read el.value and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Radio is a plain script that registers a custom element. Load /irina-vfx/radio.js with a script tag (not a module), then use <irina-radio label=\"Plan\"><option value=\"a\" selected>Option A</option><option value=\"b\">Option B</option></irina-radio>. Read el.value and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "input",
@@ -123,10 +123,10 @@
         {
           "path": "input/input.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/input.js"
+          "target": "~/public/irina-vfx/input.js"
         }
       ],
-      "docs": "Irina Input is a plain script that registers a custom element. Load /irina-fx/input.js with a script tag (not a module), then use <irina-input label=\"Name\" placeholder=\"Type something\"></irina-input>. Read and set el.value; it fires input and change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Input is a plain script that registers a custom element. Load /irina-vfx/input.js with a script tag (not a module), then use <irina-input label=\"Name\" placeholder=\"Type something\"></irina-input>. Read and set el.value; it fires input and change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "tabs",
@@ -144,10 +144,10 @@
         {
           "path": "tabs/tabs.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/tabs.js"
+          "target": "~/public/irina-vfx/tabs.js"
         }
       ],
-      "docs": "Irina Tabs is a plain script that registers a custom element. Load /irina-fx/tabs.js with a script tag (not a module), then use <irina-tabs label=\"Sections\"><option>Home</option><option>Profile</option></irina-tabs>. Listen for change (e.detail: index, value, label) and show the panel yourself. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Tabs is a plain script that registers a custom element. Load /irina-vfx/tabs.js with a script tag (not a module), then use <irina-tabs label=\"Sections\"><option>Home</option><option>Profile</option></irina-tabs>. Listen for change (e.detail: index, value, label) and show the panel yourself. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "progress",
@@ -165,10 +165,10 @@
         {
           "path": "progress/progress.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/progress.js"
+          "target": "~/public/irina-vfx/progress.js"
         }
       ],
-      "docs": "Irina Progress is a plain script that registers a custom element. Load /irina-fx/progress.js with a script tag (not a module), then use <irina-progress label=\"Loading\"></irina-progress>, then el.set(n) with progress from 0 to 1. Listen for irina:done (fires once). el.reset() for the next task. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Progress is a plain script that registers a custom element. Load /irina-vfx/progress.js with a script tag (not a module), then use <irina-progress label=\"Loading\"></irina-progress>, then el.set(n) with progress from 0 to 1. Listen for irina:done (fires once). el.reset() for the next task. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "rating",
@@ -186,10 +186,10 @@
         {
           "path": "rating/rating.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/rating.js"
+          "target": "~/public/irina-vfx/rating.js"
         }
       ],
-      "docs": "Irina Rating is a plain script that registers a custom element. Load /irina-fx/rating.js with a script tag (not a module), then use <irina-rating label=\"Rating\"></irina-rating>. Read el.value (0 to 5) and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Rating is a plain script that registers a custom element. Load /irina-vfx/rating.js with a script tag (not a module), then use <irina-rating label=\"Rating\"></irina-rating>. Read el.value (0 to 5) and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "toast",
@@ -207,10 +207,10 @@
         {
           "path": "toast/toast.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/toast.js"
+          "target": "~/public/irina-vfx/toast.js"
         }
       ],
-      "docs": "Irina Toast is a plain script that registers a custom element. Load /irina-fx/toast.js with a script tag (not a module), then use Put <irina-toast></irina-toast> where toasts should appear and call el.show(\"Saved\"). It stays for the duration attribute (2.6 s) or until el.hide(). More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Toast is a plain script that registers a custom element. Load /irina-vfx/toast.js with a script tag (not a module), then use Put <irina-toast></irina-toast> where toasts should appear and call el.show(\"Saved\"). It stays for the duration attribute (2.6 s) or until el.hide(). More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "tooltip",
@@ -228,10 +228,10 @@
         {
           "path": "tooltip/tooltip.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/tooltip.js"
+          "target": "~/public/irina-vfx/tooltip.js"
         }
       ],
-      "docs": "Irina Tooltip is a plain script that registers a custom element. Load /irina-fx/tooltip.js with a script tag (not a module), then use <irina-tooltip text=\"Helpful hint!\"></irina-tooltip>. Opens on hover, focus and tap; Escape closes it. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Tooltip is a plain script that registers a custom element. Load /irina-vfx/tooltip.js with a script tag (not a module), then use <irina-tooltip text=\"Helpful hint!\"></irina-tooltip>. Opens on hover, focus and tap; Escape closes it. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "select",
@@ -249,10 +249,10 @@
         {
           "path": "select/select.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/select.js"
+          "target": "~/public/irina-vfx/select.js"
         }
       ],
-      "docs": "Irina Select is a plain script that registers a custom element. Load /irina-fx/select.js with a script tag (not a module), then use <irina-select label=\"Weapon\"><option value=\"katana\">Katana</option></irina-select>. Read el.value and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Select is a plain script that registers a custom element. Load /irina-vfx/select.js with a script tag (not a module), then use <irina-select label=\"Weapon\"><option value=\"katana\">Katana</option></irina-select>. Read el.value and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "dialog",
@@ -270,10 +270,10 @@
         {
           "path": "dialog/dialog.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/dialog.js"
+          "target": "~/public/irina-vfx/dialog.js"
         }
       ],
-      "docs": "Irina Dialog is a plain script that registers a custom element. Load /irina-fx/dialog.js with a script tag (not a module), put <irina-dialog heading=\"Title\">...</irina-dialog>, and call el.show(). Closes on Escape, backdrop click, or close button. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Dialog is a plain script that registers a custom element. Load /irina-vfx/dialog.js with a script tag (not a module), put <irina-dialog heading=\"Title\">...</irina-dialog>, and call el.show(). Closes on Escape, backdrop click, or close button. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "accordion",
@@ -291,10 +291,10 @@
         {
           "path": "accordion/accordion.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/accordion.js"
+          "target": "~/public/irina-vfx/accordion.js"
         }
       ],
-      "docs": "Irina Accordion is a plain script that registers a custom element. Load /irina-fx/accordion.js with a script tag (not a module), then use <irina-accordion heading=\"Details\">...</irina-accordion>. Read el.open and listen for change. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Accordion is a plain script that registers a custom element. Load /irina-vfx/accordion.js with a script tag (not a module), then use <irina-accordion heading=\"Details\">...</irina-accordion>. Read el.open and listen for change. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "counter",
@@ -312,10 +312,10 @@
         {
           "path": "counter/counter.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/counter.js"
+          "target": "~/public/irina-vfx/counter.js"
         }
       ],
-      "docs": "Irina Counter is a plain script that registers a custom element. Load /irina-fx/counter.js with a script tag (not a module), then use <irina-counter count=\"12\" label=\"Like\"></irina-counter>. Read el.count and el.active; listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Counter is a plain script that registers a custom element. Load /irina-vfx/counter.js with a script tag (not a module), then use <irina-counter count=\"12\" label=\"Like\"></irina-counter>. Read el.count and el.active; listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "drawer",
@@ -333,10 +333,10 @@
         {
           "path": "drawer/drawer.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/drawer.js"
+          "target": "~/public/irina-vfx/drawer.js"
         }
       ],
-      "docs": "Irina Drawer is a plain script that registers a custom element. Load /irina-fx/drawer.js with a script tag (not a module), put <irina-drawer heading=\"Menu\">...</irina-drawer>, and call el.show(). Supports side=\"right\" or side=\"left\". More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Drawer is a plain script that registers a custom element. Load /irina-vfx/drawer.js with a script tag (not a module), put <irina-drawer heading=\"Menu\">...</irina-drawer>, and call el.show(). Supports side=\"right\" or side=\"left\". More: https://github.com/dayy4dev/irina-vfx"
     },
     {
       "name": "badge",
@@ -354,10 +354,10 @@
         {
           "path": "badge/badge.js",
           "type": "registry:file",
-          "target": "~/public/irina-fx/badge.js"
+          "target": "~/public/irina-vfx/badge.js"
         }
       ],
-      "docs": "Irina Badge is a plain script that registers a custom element. Load /irina-fx/badge.js with a script tag (not a module), then use <irina-badge interactive variant=\"accent\" sfx=\"BAM!\">Trigger Stamp</irina-badge>. Call el.stamp() to slam it. More: https://github.com/dayy4dev/irina-fx"
+      "docs": "Irina Badge is a plain script that registers a custom element. Load /irina-vfx/badge.js with a script tag (not a module), then use <irina-badge interactive variant=\"accent\" sfx=\"BAM!\">Trigger Stamp</irina-badge>. Call el.stamp() to slam it. More: https://github.com/dayy4dev/irina-vfx"
     }
   ]
 }

@@ -123,7 +123,7 @@ const P = { fill: '#fffdf7', shade: '#d4d0c5', line: '#111111', accent: '#c91832
 const VARS = '--ir-card:#fffdf7;--ir-ink:#111111;--ir-dim:#57534a;--ir-soft:#d4d0c5;--ir-pri:#111111;--ir-pri-ink:#fffdf7;--ir-acc:#c91832;--ir-on-acc:#fffdf7;--ir-track:#cdc8bc;--ir-r:2px;--ir-bw:3.2px;--ir-sh:5px 5px 0 var(--ir-ink);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-acc);--ir-fill:var(--ir-acc);--ir-on-pri:#fffdf7;';
 // :where() keeps these at no specificity, so a page's own :root { --ir-acc: ... } wins.
 const pageCss = `:where(:root){${VARS}}
-canvas.irina-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
+canvas.irina-vfx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
 document.head.append(Object.assign(document.createElement('style'), { textContent: pageCss }));
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -217,7 +217,7 @@ let g = null, dpr = 1;
 const front = { c: null, g: null, live: [], dirty: false }, layers = [front];
 function ensureFront() {
   if (front.c || !document.body) return;
-  front.c = Object.assign(document.createElement('canvas'), { className: 'irina-fx' }); front.c.setAttribute('aria-hidden', 'true');
+  front.c = Object.assign(document.createElement('canvas'), { className: 'irina-vfx' }); front.c.setAttribute('aria-hidden', 'true');
   document.body.append(front.c); front.g = front.c.getContext('2d'); size();
 }
 function size() { dpr = Math.min(2.5, devicePixelRatio || 1); if (front.c) { front.c.width = innerWidth * dpr; front.c.height = innerHeight * dpr; } }

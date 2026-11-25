@@ -47,7 +47,7 @@ Every effect is drawn in code on a fixed canvas over the page (plus per-componen
 
 ## Try them
 
-Repo: https://github.com/dayy4dev/irina-fx
+Repo: https://github.com/dayy4dev/irina-vfx
 
 Run locally:
 
@@ -60,12 +60,12 @@ The gallery includes all seventeen controls live, theme presets, live color/shap
 
 ## Use one
 
-Each component is a single standalone file. Install it with the shadcn CLI, which places the file in `public/irina-fx/`:
+Each component is a single standalone file. Install it with the shadcn CLI, which places the file in `public/irina-vfx/`:
 
 ```sh
-npx shadcn add dayy4dev/irina-fx/button
-npx shadcn add dayy4dev/irina-fx/toggle
-npx shadcn add dayy4dev/irina-fx/slider
+npx shadcn add dayy4dev/irina-vfx/button
+npx shadcn add dayy4dev/irina-vfx/toggle
+npx shadcn add dayy4dev/irina-vfx/slider
 # ...checkbox, radio, input, tabs, progress, rating, toast, tooltip, select, dialog, accordion, counter, drawer, badge
 ```
 
@@ -90,10 +90,10 @@ For agents, [llms.txt](llms.txt) lists every file and what it is. Each card in t
 
 ## Make your own
 
-`skills/irina-fx/` contains the workflow these controls were built with:
+`skills/irina-vfx/` contains the workflow these controls were built with:
 
 ```sh
-npx skills add dayy4dev/irina-fx
+npx skills add dayy4dev/irina-vfx
 ```
 
 - `SKILL.md` is the workflow and guidelines.
@@ -103,7 +103,7 @@ npx skills add dayy4dev/irina-fx
 
 ## Working on this repo
 
-- `core.js` is the source of the shared core. After editing it, run `node tools/build.mjs` to copy it into all 17 component files (between the `// >>> irina core` markers) and into `skills/irina-fx/core.js`. `node tools/build.mjs --check` exits 1 if any file is out of date.
+- `core.js` is the source of the shared core. After editing it, run `node tools/build.mjs` to copy it into all 17 component files (between the `// >>> irina core` markers) and into `skills/irina-vfx/core.js`. `node tools/build.mjs --check` exits 1 if any file is out of date.
 - `art/words/` holds the six painted sound-effect words; `tools/trace.py` traces them into `WORDS` paths in `core.js`.
 - `node tools/test.mjs http://localhost:8000/gallery/` drives all 17 controls with touch and key events at 390px phone width, checks form submission and horizontal overflow, and exits 1 on failure. `node tools/shot.mjs URL OUT W H SCALE` captures a screenshot. Both require Chrome/Chromium or Edge (`CHROME=...`).
 

@@ -20,5 +20,5 @@ for (const n of NAMES) {
   const src = between(was, 'irina core', core, file);
   if (src !== was) { stale++; if (!check) writeFileSync(file, src); console.log(`${check ? 'stale' : 'wrote'} ${n}/${n}.js`); }
 }
-if (!check) copyFileSync(join(root, 'core.js'), join(root, 'skills/irina-fx/core.js'));
+if (!check) copyFileSync(join(root, 'core.js'), join(root, 'skills/irina-vfx/core.js'));
 if (check && stale) process.exit(1);

@@ -269,7 +269,7 @@
         </div>
         <p class="lede">Seventeen ink-framed web controls driven by spring physics, screentone clouds, manga concentration lines, procedural audio, and comic sound-effect lettering on a single page-wide canvas.</p>
       </div>
-      <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">GitHub Repo <span aria-hidden="true">&#8599;</span></a>
+      <a class="pill" href="https://github.com/dayy4dev/irina-vfx" target="_blank" rel="noopener">GitHub Repo <span aria-hidden="true">&#8599;</span></a>
     </div>
 
     <div class="controls">
@@ -324,7 +324,7 @@
 <script src="../drawer/drawer.js"></script>
 <script src="../badge/badge.js"></script>
 <script>
-const REPO = 'dayy4dev/irina-fx';
+const REPO = 'dayy4dev/irina-vfx';
 const ITEMS = [
   { id: 'button', name: 'Primary button', tag: 'irina-button', how: 'Click it for a full ink impact frame.', html: '<irina-button data-demo="primary">Confirm</irina-button>' },
   { id: 'button', name: 'Secondary button', tag: 'irina-button', how: 'Click it for a light corner snap.', html: '<irina-button variant="secondary">Cancel</irina-button>' },
@@ -388,7 +388,7 @@ const WIRE = {
   badge: ['Use <irina-badge>NEW</irina-badge> for a static manga stamp, or <irina-badge interactive variant="accent" sfx="BAM!">Trigger Stamp</irina-badge> for a clickable one.',
     'Supports variant="default" | "accent" | "ink", custom sfx word, and el.stamp() to slam it programmatically.'],
 };
-const SKILL = { url: new URL('../skills/irina-fx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
+const SKILL = { url: new URL('../skills/irina-vfx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
 const fileUrl = (id) => new URL(`../${id}/${id}.js`, location.href).href;
 const prompt = (it) => [
   `Add the Irina ${it.name.toLowerCase()} to my app. It is a single JavaScript file with no dependencies that defines a <${it.tag}> element.`,
@@ -398,7 +398,7 @@ const prompt = (it) => [
   `${WIRE[it.id].length + 3}. Its effects are drawn on one fixed canvas over the page, so they can fly outside the control. They switch off for prefers-reduced-motion. Its colours are --ir-* CSS variables.`,
   `When you are done, show me where you put it and what listens to it. If something about it needs to look different, tell me instead of editing the effects.`,
   ``,
-  `These components were made with my irina-fx skill: ${SKILL.url}`,
+  `These components were made with my irina-vfx skill: ${SKILL.url}`,
   `If you can install skills, install it with: ${SKILL.install}`,
   `Read it before you start. For this job, follow its "Wire it in" and "Check it" sections. If I later ask you to change how it reacts, or to make another control in the same style, use the whole skill.`,
 ].join('\n');
@@ -408,10 +408,10 @@ const motionStatus = document.getElementById('motionStatus');
 const toneBtn = document.getElementById('toneToggle');
 const stepBtn = document.getElementById('stepToggle');
 const soundBtn = document.getElementById('soundToggle');
-const MOTION_KEY = 'irina-fx:respect-motion';
-const TONE_KEY = 'irina-fx:manga-tone';
-const STEP_KEY = 'irina-fx:stepped';
-const SOUND_KEY = 'irina-fx:sound';
+const MOTION_KEY = 'irina-vfx:respect-motion';
+const TONE_KEY = 'irina-vfx:manga-tone';
+const STEP_KEY = 'irina-vfx:stepped';
+const SOUND_KEY = 'irina-vfx:sound';
 const osReduce = matchMedia('(prefers-reduced-motion: reduce)');
 
 function syncEngineUI() {
@@ -476,7 +476,7 @@ soundBtn.addEventListener('click', () => {
 osReduce.addEventListener?.('change', syncEngineUI);
 syncEngineUI();
 
-const THEME_KEY = 'irina-fx:manga-theme';
+const THEME_KEY = 'irina-vfx:manga-theme';
 const DEFAULT_THEME = {
   acc: '#c91832', pri: '#111111', onPri: '#fffdf7', ink: '#111111',
   line: '#111111', soft: '#d4d0c5', card: '#fffdf7',

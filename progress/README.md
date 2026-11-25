@@ -15,12 +15,12 @@ The page plays a pretend load. Drag the slider under it to drive it yourself.
 
 ```html
 <script src="progress.js"></script>
-<sakuga-progress label="Uploading photos"></sakuga-progress>
+<irina-progress label="Uploading photos"></irina-progress>
 ```
 
 ```js
 upload.onprogress = (e) => el.set(e.loaded / e.total);
-el.addEventListener('sakuga:done', () => showResult());
+el.addEventListener('irina:done', () => showResult());
 el.set(0.5, true);   // straight there, no easing
 el.reset();          // back to 0 for the next task
 el.value; el.done;
@@ -34,8 +34,8 @@ el.value; el.done;
 | `demo` | plays a pretend load on a loop; click restarts it | off |
 
 - **One number drives it.** The bar eases toward what you give it (at least 12% a second, at most 90%), so a jump still gets ridden by the cloud. The cloud's speed and drag come from how fast the bar is actually moving, so a stalled upload sits still.
-- **`sakuga:done` fires once,** when the bar itself reaches the end, a moment after you `set(1)`. Going backwards (a lower number) clears it.
-- **Size:** 280 pixels wide (`--sk-progress-width`). It keeps 70 pixels above the bar for the cloud and about 110 below for the ground and the number.
+- **`irina:done` fires once,** when the bar itself reaches the end, a moment after you `set(1)`. Going backwards (a lower number) clears it.
+- **Size:** 280 pixels wide (`--ir-progress-width`). It keeps 70 pixels above the bar for the cloud and about 110 below for the ground and the number.
 - **Off screen it stops drawing.** The bar still fills.
 - **Don't ship `demo`.**
 

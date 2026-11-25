@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sakuga VFX</title>
+<title>IrinaFX</title>
 <style>
   :root { --page: #ffffff; --text: #1d1a4a; --mute: #8580b0; --line: #dcdaf0; --chip: #f4f3fc; }
   * { box-sizing: border-box; }
@@ -40,16 +40,15 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>Sakuga VFX</h1>
+      <h1>IrinaFX</h1>
       <p class="lede">Twelve ordinary controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, splashes, slashes) with manga sound-effect lettering. Each one is a single file with no dependencies.</p>
       <p class="links">
-        <a class="pill" href="https://github.com/finktheartist/sakuga-vfx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
-        <a class="pill" href="https://x.com/crtvTeknologist" target="_blank" rel="noopener">@crtvTeknologist on X <span aria-hidden="true">&#8599;</span></a>
+        <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
       </p>
     </div>
   </header>
   <main class="grid" id="grid"></main>
-  <p class="note">Effects are drawn on one canvas over the page and switch off for <code>prefers-reduced-motion</code>. Every colour is a <code>--sk-*</code> variable you can override.</p>
+  <p class="note">Effects are drawn on one canvas over the page and switch off for <code>prefers-reduced-motion</code>. Every colour is a <code>--ir-*</code> variable you can override.</p>
 </div>
 <script src="../button/button.js"></script>
 <script src="../toggle/toggle.js"></script>
@@ -64,64 +63,64 @@
 <script src="../tooltip/tooltip.js"></script>
 <script>
 // The gallery: every control live on one page, with its install line and a prompt that hands a coding agent the real file.
-const REPO = 'finktheartist/sakuga-vfx';
+const REPO = 'dayy4dev/irina-fx';
 const ITEMS = [
-  { id: 'button', name: 'Primary button', tag: 'sakuga-button', how: 'Click it.', html: '<sakuga-button data-demo="primary">Confirm</sakuga-button>' },
-  { id: 'button', name: 'Secondary button', tag: 'sakuga-button', how: 'Click it.', html: '<sakuga-button variant="secondary">Cancel</sakuga-button>' },
-  { id: 'toggle', name: 'Toggle', tag: 'sakuga-toggle', how: 'Flip it, then flip it back.', html: '<sakuga-toggle label="Notifications"></sakuga-toggle>' },
-  { id: 'slider', name: 'Slider', tag: 'sakuga-slider', how: 'Drag it fast, and let go while it is moving.', html: '<sakuga-slider value="30" label="Volume"></sakuga-slider>' },
-  { id: 'checkbox', name: 'Checkbox', tag: 'sakuga-checkbox', how: 'Tick it.', html: '<sakuga-checkbox>Remember me</sakuga-checkbox>' },
-  { id: 'radio', name: 'Radio', tag: 'sakuga-radio', how: 'Pick the other one.', html: '<sakuga-radio label="Plan"><option value="a" selected>Option A</option><option value="b">Option B</option></sakuga-radio>' },
-  { id: 'input', name: 'Text input', tag: 'sakuga-input', how: 'Click it and type.', html: '<sakuga-input label="Text" placeholder="Type something"></sakuga-input>' },
-  { id: 'tabs', name: 'Tabs', tag: 'sakuga-tabs', how: 'Pick another tab, or use the arrow keys.', html: '<sakuga-tabs label="Sections"><option>Home</option><option>Profile</option><option>Settings</option></sakuga-tabs>' },
-  { id: 'progress', name: 'Progress', tag: 'sakuga-progress', how: 'It plays a load by itself, in surges. Click it to start again.', html: '<sakuga-progress demo label="Loading"></sakuga-progress>', wide: true },
-  { id: 'rating', name: 'Rating', tag: 'sakuga-rating', how: 'Give it five.', html: '<sakuga-rating label="Rating"></sakuga-rating>' },
-  { id: 'toast', name: 'Toast', tag: 'sakuga-toast', how: 'Press Save.', html: '<div class="toastwrap"><sakuga-button variant="secondary" data-demo="save">Save</sakuga-button><sakuga-toast></sakuga-toast></div>' },
-  { id: 'tooltip', name: 'Tooltip', tag: 'sakuga-tooltip', how: 'Hover, focus or tap the button.', html: '<sakuga-tooltip text="Helpful hint!"></sakuga-tooltip>' },
+  { id: 'button', name: 'Primary button', tag: 'irina-button', how: 'Click it.', html: '<irina-button data-demo="primary">Confirm</irina-button>' },
+  { id: 'button', name: 'Secondary button', tag: 'irina-button', how: 'Click it.', html: '<irina-button variant="secondary">Cancel</irina-button>' },
+  { id: 'toggle', name: 'Toggle', tag: 'irina-toggle', how: 'Flip it, then flip it back.', html: '<irina-toggle label="Notifications"></irina-toggle>' },
+  { id: 'slider', name: 'Slider', tag: 'irina-slider', how: 'Drag it fast, and let go while it is moving.', html: '<irina-slider value="30" label="Volume"></irina-slider>' },
+  { id: 'checkbox', name: 'Checkbox', tag: 'irina-checkbox', how: 'Tick it.', html: '<irina-checkbox>Remember me</irina-checkbox>' },
+  { id: 'radio', name: 'Radio', tag: 'irina-radio', how: 'Pick the other one.', html: '<irina-radio label="Plan"><option value="a" selected>Option A</option><option value="b">Option B</option></irina-radio>' },
+  { id: 'input', name: 'Text input', tag: 'irina-input', how: 'Click it and type.', html: '<irina-input label="Text" placeholder="Type something"></irina-input>' },
+  { id: 'tabs', name: 'Tabs', tag: 'irina-tabs', how: 'Pick another tab, or use the arrow keys.', html: '<irina-tabs label="Sections"><option>Home</option><option>Profile</option><option>Settings</option></irina-tabs>' },
+  { id: 'progress', name: 'Progress', tag: 'irina-progress', how: 'It plays a load by itself, in surges. Click it to start again.', html: '<irina-progress demo label="Loading"></irina-progress>', wide: true },
+  { id: 'rating', name: 'Rating', tag: 'irina-rating', how: 'Give it five.', html: '<irina-rating label="Rating"></irina-rating>' },
+  { id: 'toast', name: 'Toast', tag: 'irina-toast', how: 'Press Save.', html: '<div class="toastwrap"><irina-button variant="secondary" data-demo="save">Save</irina-button><irina-toast></irina-toast></div>' },
+  { id: 'tooltip', name: 'Tooltip', tag: 'irina-tooltip', how: 'Hover, focus or tap the button.', html: '<irina-tooltip text="Helpful hint!"></irina-tooltip>' },
 ];
 
 // What each prompt says about wiring its component in. The rest of the prompt is the same for all of them.
 const WIRE = {
-  button: ['Use <sakuga-button>Confirm</sakuga-button> where my main button is, and <sakuga-button variant="secondary">Cancel</sakuga-button> for a quieter one. The text inside is the label.',
+  button: ['Use <irina-button>Confirm</irina-button> where my main button is, and <irina-button variant="secondary">Cancel</irina-button> for a quieter one. The text inside is the label.',
     'Listen for click on the element as usual. For a submit button inside a form, add type="submit". The disabled attribute works like a button\'s.',
     'When the action has actually succeeded, call el.done() to land a check on the button. Do not call it for a failure.'],
-  toggle: ['Use <sakuga-toggle label="..."></sakuga-toggle> where my switch is. The label is what a screen reader hears, so name the setting.',
+  toggle: ['Use <irina-toggle label="..."></irina-toggle> where my switch is. The label is what a screen reader hears, so name the setting.',
     'Read el.checked and listen for change. With a name attribute it is sent with its form like a checkbox (value "on", or the value attribute).',
     'Setting el.checked from code jumps to the end without the animation; only a person flipping it plays it. The drawing is bigger than the switch, so the element keeps a margin around it for the splash.'],
-  slider: ['Use <sakuga-slider value="30" label="..."></sakuga-slider> where my slider is. min, max, step and unit (shown after the number, "%" by default) work as attributes.',
+  slider: ['Use <irina-slider value="30" label="..."></irina-slider> where my slider is. min, max, step and unit (shown after the number, "%" by default) work as attributes.',
     'Read el.value. It fires input while it moves and change when it is let go. With a name attribute it is sent with its form.',
-    'It is 230 pixels wide; set the --sk-slider-width CSS variable to change that. It keeps 30 pixels above it for the value bubble.'],
-  checkbox: ['Use <sakuga-checkbox>Remember me</sakuga-checkbox>. The text inside is the label.', 'Read el.checked and listen for change. With a name attribute it is sent with its form like a checkbox.'],
-  radio: ['List the choices as <option>s inside it: <sakuga-radio label="Plan"><option value="a" selected>Option A</option><option value="b">Option B</option></sakuga-radio>. The label is what a screen reader hears for the group.',
+    'It is 230 pixels wide; set the --ir-slider-width CSS variable to change that. It keeps 30 pixels above it for the value bubble.'],
+  checkbox: ['Use <irina-checkbox>Remember me</irina-checkbox>. The text inside is the label.', 'Read el.checked and listen for change. With a name attribute it is sent with its form like a checkbox.'],
+  radio: ['List the choices as <option>s inside it: <irina-radio label="Plan"><option value="a" selected>Option A</option><option value="b">Option B</option></irina-radio>. The label is what a screen reader hears for the group.',
     'Read el.value and listen for change. With a name attribute it is sent with its form.'],
-  input: ['Use <sakuga-input label="..." placeholder="..."></sakuga-input> where my text field is. type can be text, email, search, url, tel or password.',
+  input: ['Use <irina-input label="..." placeholder="..."></irina-input> where my text field is. type can be text, email, search, url, tel or password.',
     'Read and set el.value. It fires input and change like a text input. With a name attribute it is sent with its form.',
-    'It is 230 pixels wide; set the --sk-input-width CSS variable to change that.'],
-  tabs: ['List the tabs as <option>s inside it: <sakuga-tabs label="..."><option value="home">Home</option>...</sakuga-tabs>.',
+    'It is 230 pixels wide; set the --ir-input-width CSS variable to change that.'],
+  tabs: ['List the tabs as <option>s inside it: <irina-tabs label="..."><option value="home">Home</option>...</irina-tabs>.',
     'It only draws the tabs. Listen for change (e.detail has index, value and label) and show the matching panel yourself. el.selected is the index; setting it moves the tab without the landing effects.'],
-  progress: ['Put <sakuga-progress label="..."></sakuga-progress> where my progress bar is. The label is what a screen reader hears, so say what is loading.',
+  progress: ['Put <irina-progress label="..."></irina-progress> where my progress bar is. The label is what a screen reader hears, so say what is loading.',
     'Wire it to my real task: call el.set(n) with progress from 0 to 1 as often as it changes. The bar eases toward the number, so a jump is still ridden. el.set(n, true) goes straight there.',
-    'Listen for the "sakuga:done" event and move on from there. It fires once, when the bar itself reaches the end, a moment after my task finishes. el.reset() puts it back to 0.',
+    'Listen for the "irina:done" event and move on from there. It fires once, when the bar itself reaches the end, a moment after my task finishes. el.reset() puts it back to 0.',
     'With the demo attribute it plays a pretend load on a loop. Do not ship it with that attribute.',
-    'It is 280 pixels wide (set --sk-progress-width to change it) and keeps 70 pixels above the bar for the cloud and about 110 below for the ground and the percentage.'],
-  rating: ['Use <sakuga-rating label="..."></sakuga-rating>.', 'Read el.value (0 to 5) and listen for change. Clicking the lit star again clears it. With a name attribute it is sent with its form.'],
-  toast: ['Put <sakuga-toast></sakuga-toast> where my toasts should appear, and call el.show("Saved") when there is something to say. It is a status region, so the message is read out.',
+    'It is 280 pixels wide (set --ir-progress-width to change it) and keeps 70 pixels above the bar for the cloud and about 110 below for the ground and the percentage.'],
+  rating: ['Use <irina-rating label="..."></irina-rating>.', 'Read el.value (0 to 5) and listen for change. Clicking the lit star again clears it. With a name attribute it is sent with its form.'],
+  toast: ['Put <irina-toast></irina-toast> where my toasts should appear, and call el.show("Saved") when there is something to say. It is a status region, so the message is read out.',
     'It stays for the duration attribute (2.6 seconds by default), or until el.hide(). It has a close button.',
     'The element keeps its place on the page while the toast is hidden. Position it yourself, for example position: fixed; left: 24px; bottom: 24px.'],
-  tooltip: ['Use <sakuga-tooltip text="..." label="..."></sakuga-tooltip> next to the thing it explains. text is the hint; label is what a screen reader calls the button ("Help" by default).',
+  tooltip: ['Use <irina-tooltip text="..." label="..."></irina-tooltip> next to the thing it explains. text is the hint; label is what a screen reader calls the button ("Help" by default).',
     'It opens on hover, focus and tap, and Escape closes it. Whatever is inside the element replaces the "?" on the button.'],
 };
-const SKILL = { url: new URL('../skills/sakuga-vfx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
+const SKILL = { url: new URL('../skills/irina-fx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
 const fileUrl = (id) => new URL(`../${id}/${id}.js`, location.href).href;
 const prompt = (it) => [
-  `Add the Sakuga ${it.name.toLowerCase()} to my app. It is a single JavaScript file with no dependencies that defines a <${it.tag}> element.`,
+  `Add the Irina ${it.name.toLowerCase()} to my app. It is a single JavaScript file with no dependencies that defines a <${it.tag}> element.`,
   `1. Get the file from ${fileUrl(it.id)} and save it in my project as ${it.id}.js. Do not rewrite it or split it up.`,
   `2. Load it with a plain script tag (not type="module").`,
   ...WIRE[it.id].map((l, i) => `${i + 3}. ${l}`),
-  `${WIRE[it.id].length + 3}. Its effects are drawn on one fixed canvas over the page, so they can fly outside the control. They switch off for prefers-reduced-motion. Its colours are --sk-* CSS variables.`,
+  `${WIRE[it.id].length + 3}. Its effects are drawn on one fixed canvas over the page, so they can fly outside the control. They switch off for prefers-reduced-motion. Its colours are --ir-* CSS variables.`,
   `When you are done, show me where you put it and what listens to it. If something about it needs to look different, tell me instead of editing the effects.`,
   ``,
-  `These components were made with my sakuga-vfx skill: ${SKILL.url}`,
+  `These components were made with my irina-fx skill: ${SKILL.url}`,
   `If you can install skills, install it with: ${SKILL.install}`,
   `Read it before you start. For this job, follow its "Wire it in" and "Check it" sections. If I later ask you to change how it reacts, or to make another control in the same style, use the whole skill.`,
 ].join('\n');
@@ -136,12 +135,12 @@ for (const it of ITEMS) {
   card.querySelector('[data-copy=prompt]').addEventListener('click', (e) => copy(prompt(it), e.currentTarget, said));
   grid.append(card);
   const el = card.querySelector(it.tag), say = (t) => { said.textContent = t; };   // the one line under each control that says what happened
-  if (it.tag === 'sakuga-button' && el.dataset.demo === 'primary') el.addEventListener('click', () => { say('Clicked'); setTimeout(() => el.done(), 760); });
-  else if (it.tag === 'sakuga-button') el.addEventListener('click', () => say('Clicked'));
-  else if (it.tag === 'sakuga-toast') card.querySelector('[data-demo=save]').addEventListener('click', () => el.show('Saved successfully!'));
-  else if (it.tag === 'sakuga-progress') el.addEventListener('sakuga:done', () => say('sakuga:done'));
-  else if (it.tag === 'sakuga-tabs') el.addEventListener('change', (e) => say(`Tab: ${e.detail.label}`));
-  else el.addEventListener('change', () => say(`change: ${it.tag === 'sakuga-toggle' || it.tag === 'sakuga-checkbox' ? (el.checked ? 'on' : 'off') : el.value}`));
+  if (it.tag === 'irina-button' && el.dataset.demo === 'primary') el.addEventListener('click', () => { say('Clicked'); setTimeout(() => el.done(), 760); });
+  else if (it.tag === 'irina-button') el.addEventListener('click', () => say('Clicked'));
+  else if (it.tag === 'irina-toast') card.querySelector('[data-demo=save]').addEventListener('click', () => el.show('Saved successfully!'));
+  else if (it.tag === 'irina-progress') el.addEventListener('irina:done', () => say('irina:done'));
+  else if (it.tag === 'irina-tabs') el.addEventListener('change', (e) => say(`Tab: ${e.detail.label}`));
+  else el.addEventListener('change', () => say(`change: ${it.tag === 'irina-toggle' || it.tag === 'irina-checkbox' ? (el.checked ? 'on' : 'off') : el.value}`));
 }
 // Copying needs the clipboard API, which plain http (other than localhost) does not have, so fall back to a selected textarea.
 async function copy(text, btn, said) {

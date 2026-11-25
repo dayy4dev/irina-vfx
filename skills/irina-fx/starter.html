@@ -12,18 +12,18 @@
 <like-button></like-button>
 <script src="core.js"></script>
 <script>
-// The smallest whole example: a like button built on the Sakuga core.
+// The smallest whole example: a like button built on the Irina core.
 // It shows the four things every component does: a real control in a shadow root, a spring for its own motion,
 // effects thrown at the page in page coordinates, and one frame() that the shared clock calls.
 (() => {
-const fx = window.SakugaFX, { Spring, at, squashy, burst, ticks, puff, sfx, hollow, later } = fx;
+const fx = window.IrinaFX, { Spring, at, squashy, burst, ticks, puff, sfx, hollow, later } = fx;
 
 class LikeButton extends fx.Base {
   static delegates = true;                       // focus goes to the button inside
   static css = `
-    button { width: 64px; height: 64px; border: var(--sk-bw) solid var(--sk-ink); border-radius: 50%; background: var(--sk-card); box-shadow: var(--sk-sh); cursor: pointer; }
-    svg { width: 30px; height: 30px; fill: var(--sk-card); stroke: var(--sk-ink); stroke-width: 2.4; stroke-linejoin: round; transform: scale(var(--s, 1)); }
-    button[aria-pressed=true] svg { fill: var(--sk-acc); }`;
+    button { width: 64px; height: 64px; border: var(--ir-bw) solid var(--ir-ink); border-radius: 50%; background: var(--ir-card); box-shadow: var(--ir-sh); cursor: pointer; }
+    svg { width: 30px; height: 30px; fill: var(--ir-card); stroke: var(--ir-ink); stroke-width: 2.4; stroke-linejoin: round; transform: scale(var(--s, 1)); }
+    button[aria-pressed=true] svg { fill: var(--ir-acc); }`;
   render() { return '<button type="button" aria-pressed="false" aria-label="Like"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>'; }
   setup() {
     const b = this.b = this.$('button');

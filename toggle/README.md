@@ -15,8 +15,8 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="toggle.js"></script>
-<sakuga-toggle label="Notifications"></sakuga-toggle>
-<sakuga-toggle label="Dark mode" checked name="dark"></sakuga-toggle>
+<irina-toggle label="Notifications"></irina-toggle>
+<irina-toggle label="Dark mode" checked name="dark"></irina-toggle>
 ```
 
 ```js
@@ -43,5 +43,5 @@ el.flip();            // from code, with the animation
 ## Limits
 
 - **It is about 500 KB,** most of it the frames. The other components are about 45 KB.
-- **The art is painted,** so the `--sk-*` colours do not reach it.
+- **The art is painted,** so the `--ir-*` colours do not reach it.
 - **Reduced motion** skips to the last frame.

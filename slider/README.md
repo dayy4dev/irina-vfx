@@ -13,8 +13,8 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="slider.js"></script>
-<sakuga-slider value="30" label="Volume"></sakuga-slider>
-<sakuga-slider min="0" max="10" step="0.5" value="4" unit="" label="Spice" name="spice"></sakuga-slider>
+<irina-slider value="30" label="Volume"></irina-slider>
+<irina-slider min="0" max="10" step="0.5" value="4" unit="" label="Spice" name="spice"></irina-slider>
 ```
 
 ```js
@@ -32,7 +32,7 @@ el.value = 80;
 | `disabled` | can't be moved | off |
 
 - **Underneath is a real range input,** stretched over the track and transparent, so the keyboard, touch and screen readers get the native control. `value` is a string, like an input's; `valueAsNumber` is the number.
-- **Size:** 230 pixels wide; set `--sk-slider-width` to change it. It keeps 30 pixels above for the bubble.
+- **Size:** 230 pixels wide; set `--ir-slider-width` to change it. It keeps 30 pixels above for the bubble.
 
 ## Limits
 

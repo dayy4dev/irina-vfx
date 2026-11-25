@@ -13,8 +13,8 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="tooltip.js"></script>
-<sakuga-tooltip text="We only use this to send your receipt." label="Why we ask"></sakuga-tooltip>
-<sakuga-tooltip text="Keyboard shortcuts">i</sakuga-tooltip>
+<irina-tooltip text="We only use this to send your receipt." label="Why we ask"></irina-tooltip>
+<irina-tooltip text="Keyboard shortcuts">i</irina-tooltip>
 ```
 
 ```js

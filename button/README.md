@@ -21,12 +21,12 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="button.js"></script>
-<sakuga-button>Confirm</sakuga-button>
-<sakuga-button variant="secondary">Cancel</sakuga-button>
+<irina-button>Confirm</irina-button>
+<irina-button variant="secondary">Cancel</irina-button>
 ```
 
 ```js
-const el = document.querySelector('sakuga-button');
+const el = document.querySelector('irina-button');
 el.addEventListener('click', async () => {
   await save();
   el.done();          // a check lands on it, with a glint, and goes after 1.8 seconds
@@ -44,7 +44,7 @@ el.disabled = true;
 
 - **The text inside is the label.** It is a real `<button>` in the shadow root, so it takes focus, Space and Enter, and its click reaches your listener.
 - **`done()` is yours to call.** The click plays the impact whatever happens next; the check is the part that says it worked, so call it only when it did.
-- **Styling:** `sakuga-button::part(button)` reaches the button.
+- **Styling:** `irina-button::part(button)` reaches the button.
 
 ## What happens
 

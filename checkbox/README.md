@@ -13,7 +13,7 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="checkbox.js"></script>
-<sakuga-checkbox name="remember">Remember me</sakuga-checkbox>
+<irina-checkbox name="remember">Remember me</irina-checkbox>
 ```
 
 ```js

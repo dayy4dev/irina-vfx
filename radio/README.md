@@ -15,10 +15,10 @@ List the choices as `<option>`s inside it:
 
 ```html
 <script src="radio.js"></script>
-<sakuga-radio label="Plan" name="plan">
+<irina-radio label="Plan" name="plan">
   <option value="free" selected>Free</option>
   <option value="pro">Pro</option>
-</sakuga-radio>
+</irina-radio>
 ```
 
 ```js

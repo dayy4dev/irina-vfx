@@ -18,9 +18,9 @@ const between = (src, name, body, file) => {
 let stale = 0;
 for (const n of NAMES) {
   const file = join(root, n, n + '.js'), was = readFileSync(file, 'utf8');
-  let src = between(was, 'sakuga core', core, file);
+  let src = between(was, 'irina core', core, file);
   if (n === 'toggle') src = between(src, 'frames', `const SHEET = '${sheet}';`, file);
   if (src !== was) { stale++; if (!check) writeFileSync(file, src); console.log(`${check ? 'stale' : 'wrote'} ${n}/${n}.js`); }
 }
-if (!check) copyFileSync(join(root, 'core.js'), join(root, 'skills/sakuga-vfx/core.js'));
+if (!check) copyFileSync(join(root, 'core.js'), join(root, 'skills/irina-fx/core.js'));
 if (check && stale) process.exit(1);

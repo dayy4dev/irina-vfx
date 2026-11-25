@@ -13,7 +13,7 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="rating.js"></script>
-<sakuga-rating label="Rate this recipe" name="stars"></sakuga-rating>
+<irina-rating label="Rate this recipe" name="stars"></irina-rating>
 ```
 
 ```js

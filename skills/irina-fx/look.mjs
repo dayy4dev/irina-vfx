@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // look.mjs: see a reaction the way a reviewer should, as frames you can read one at a time.
 //
-//   node look.mjs "http://localhost:8000/checkbox/" --select "sakuga-checkbox" --act "0:document.querySelector('sakuga-checkbox').shadowRoot.querySelector('input').click()" --times 0,0.1,0.2,0.35,0.6,0.9
+//   node look.mjs "http://localhost:8000/checkbox/" --select "irina-checkbox" --act "0:document.querySelector('irina-checkbox').shadowRoot.querySelector('input').click()" --times 0,0.1,0.2,0.35,0.6,0.9
 //
-// Opens the page in headless Chrome, stops the Sakuga clock (SakugaFX.paused), steps it to each time with SakugaFX.advance, and photographs
+// Opens the page in headless Chrome, stops the Irina clock (IrinaFX.paused), steps it to each time with IrinaFX.advance, and photographs
 // the element with room around it (the effects fly outside it). Saves one sheet with every frame side by side. Then open the sheet and look.
 // Node 22 or later and Chrome. No installs. Options:
 //   --times 0,0.1,0.3   moments to capture, in seconds from the start (after --do)
-//   --select css        what to frame. "host >>> inner" reaches into a shadow root. Default: the first sakuga-* element
+//   --select css        what to frame. "host >>> inner" reaches into a shadow root. Default: the first irina-* element
 //   --pad 140           pixels of room around it
 //   --do "js"           run once after the page loads, before the first frame
 //   --act "0.2:js"      run js when the clock reaches 0.2 s, so one sheet can show a press and its release. Repeat it for more.
@@ -39,15 +39,15 @@ const run = async (expression) => (await send('Runtime.evaluate', { expression, 
 await send('Runtime.enable'); await send('Page.enable');
 await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
 await send('Page.navigate', { url }); await sleep(1500);
-if (!(await run('!!window.SakugaFX'))) { console.error('No SakugaFX on that page.'); process.exit(1); }
+if (!(await run('!!window.IrinaFX'))) { console.error('No IrinaFX on that page.'); process.exit(1); }
 const pick = select ? JSON.stringify(select) : 'null';
-const box = JSON.parse(await run(`(() => { const s = ${pick}; const el = s ? s.split(' >>> ').reduce((r, q, i) => (i ? r.shadowRoot : r).querySelector(q), document) : [...document.querySelectorAll('*')].find((e) => e.localName.startsWith('sakuga-'));
+const box = JSON.parse(await run(`(() => { const s = ${pick}; const el = s ? s.split(' >>> ').reduce((r, q, i) => (i ? r.shadowRoot : r).querySelector(q), document) : [...document.querySelectorAll('*')].find((e) => e.localName.startsWith('irina-'));
   if (!el) throw new Error('nothing to frame'); el.scrollIntoView({ block: 'center' }); const b = el.getBoundingClientRect(); return JSON.stringify({ x: b.left, y: b.top, w: b.width, h: b.height }); })()`));
 const clip = { x: Math.max(0, box.x - pad), y: Math.max(0, box.y - pad), width: box.w + pad * 2, height: box.h + pad * 2, scale: 1 };
-await run('SakugaFX.paused = true');
+await run('IrinaFX.paused = true');
 if (after) await run(after);
 let clock = 0; const shots = [];
-const go = async (t) => { await run(`(() => { let n = Math.round(${(t - clock) * 60}); while (n-- > 0) SakugaFX.advance(1 / 60); })()`); clock = t; };
+const go = async (t) => { await run(`(() => { let n = Math.round(${(t - clock) * 60}); while (n-- > 0) IrinaFX.advance(1 / 60); })()`); clock = t; };
 for (const t of times) {
   while (acts.length && acts[0][0] <= t) { const [at, js] = acts.shift(); await go(at); await run(js); }
   await go(t); await sleep(60);

@@ -15,11 +15,11 @@ List the tabs as `<option>`s inside it:
 
 ```html
 <script src="tabs.js"></script>
-<sakuga-tabs label="Account">
+<irina-tabs label="Account">
   <option value="home">Home</option>
   <option value="profile">Profile</option>
   <option value="settings">Settings</option>
-</sakuga-tabs>
+</irina-tabs>
 ```
 
 ```js

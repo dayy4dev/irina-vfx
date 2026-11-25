@@ -13,7 +13,7 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="input.js"></script>
-<sakuga-input label="Email" type="email" placeholder="you@example.com" name="email"></sakuga-input>
+<irina-input label="Email" type="email" placeholder="you@example.com" name="email"></irina-input>
 ```
 
 ```js
@@ -30,7 +30,7 @@ el.value = 'hello';
 | `name` | sent with its form | none |
 | `disabled` | can't be typed in | off |
 
-- **Size:** 230 pixels wide; set `--sk-input-width` to change it. `::part(input)` reaches the input.
+- **Size:** 230 pixels wide; set `--ir-input-width` to change it. `::part(input)` reaches the input.
 - In a password field the dust still follows the caret, measured over dots.
 
 ## Limits

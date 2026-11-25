@@ -13,7 +13,7 @@ python3 -m http.server 8000     # from the repo folder
 
 ```html
 <script src="toast.js"></script>
-<sakuga-toast style="position: fixed; left: 24px; bottom: 24px"></sakuga-toast>
+<irina-toast style="position: fixed; left: 24px; bottom: 24px"></irina-toast>
 ```
 
 ```js

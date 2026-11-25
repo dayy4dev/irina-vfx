@@ -1,22 +1,22 @@
-// Sakuga Rating: five stars that pop in one after another. The last one lit gets a fan of wedges and a hollow ポン;
+// Irina Rating: five stars that pop in one after another. The last one lit gets a fan of wedges and a hollow ポン;
 // five stars gets a burst behind it as well.
 //
-// One file, no dependencies. Load it with a script tag and use <sakuga-rating label="Rating"></sakuga-rating>.
+// One file, no dependencies. Load it with a script tag and use <irina-rating label="Rating"></irina-rating>.
 // Read el.value (0 to 5). It fires change. Clicking the lit star again clears it. With a name, it is sent with its form.
 (() => {
 function component(fx) {
 const { Spring, clamp, later, at, esc, puff, ticks, burst, shards, sfx, kira, hollow } = fx;
 const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-.9z"/></svg>';
 
-class SakugaRating extends fx.Base {
+class IrinaRating extends fx.Base {
   static formAssociated = true;
   static observedAttributes = ['value', 'disabled'];
   static css = `
     .stars { display: flex; }
     button { width: 44px; height: 44px; padding: 2px; border: 0; background: none; cursor: pointer; will-change: transform; }
     button:disabled { cursor: not-allowed; opacity: .5; }
-    svg { width: 100%; height: 100%; fill: var(--sk-card); stroke: var(--sk-ink); stroke-width: 2.3; stroke-linejoin: round; overflow: visible; }
-    .lit svg { fill: var(--sk-pri); }`;
+    svg { width: 100%; height: 100%; fill: var(--ir-card); stroke: var(--ir-ink); stroke-width: 2.3; stroke-linejoin: round; overflow: visible; }
+    .lit svg { fill: var(--ir-pri); }`;
   get value() { return this.score ?? +(this.getAttribute('value') || 0); }
   set value(n) { if (this.btns) this.set(clamp(Math.round(+n || 0), 0, 5), true); else this.setAttribute('value', n); }
   get disabled() { return this.hasAttribute('disabled'); }
@@ -48,16 +48,16 @@ class SakugaRating extends fx.Base {
   }
   frame(dt) { this.btns.forEach((b, i) => { const y = this.sp[i].step(dt); b.style.transform = Math.abs(y - 1) < 0.001 ? '' : `scale(${y}) rotate(${(1 - y) * -34}deg)`; }); }
 }
-fx.define('sakuga-rating', SakugaRating);
+fx.define('irina-rating', IrinaRating);
 }
 
-// >>> sakuga core (copied from core.js by tools/build.mjs: edit core.js, not this block)
-// Sakuga VFX core: springs, the effects layer and the lettering, shared by every component.
+// >>> irina core (copied from core.js by tools/build.mjs: edit core.js, not this block)
+// IrinaFX core: springs, the effects layer and the lettering, shared by every component.
 // Each component file carries a copy of this between its core markers, so any one file works on its own. The first one loaded
-// sets window.SakugaFX and the others use it. Edit this file, then run `node tools/build.mjs` to stamp it into the components.
+// sets window.IrinaFX and the others use it. Edit this file, then run `node tools/build.mjs` to stamp it into the components.
 (() => {
 'use strict';
-if (window.SakugaFX) return;
+if (window.IrinaFX) return;
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -73,10 +73,10 @@ class Spring {
 // ───────── the palette ─────────
 // P is for the effects; the CSS variables below are for the controls.
 const P = { fill: '#ffffff', shade: '#b8b3ff', line: '#5a4fd8', accent: '#ff5fa8', ink: '#1d1a4a', sfx: ['#1d1a4a', '#ffffff'] };
-const VARS = '--sk-card:#fff;--sk-ink:#1d1a4a;--sk-dim:#8580b0;--sk-soft:#b8b3ff;--sk-pri:#8f8df7;--sk-pri-ink:#1d1a4a;--sk-acc:#ff5fa8;--sk-track:#c9cbe0;--sk-r:15px;--sk-bw:3.2px;--sk-sh:6px 7px 0 var(--sk-soft);--sk-btn-sh:var(--sk-sh);--sk-btn-line:var(--sk-ink);--sk-alt-sh:var(--sk-sh);--sk-alt-line:var(--sk-ink);--sk-tick:var(--sk-ink);--sk-fill:var(--sk-acc);--sk-on-pri:#fff;';
-// :where() keeps these at no specificity, so a page's own :root { --sk-acc: ... } wins.
+const VARS = '--ir-card:#fff;--ir-ink:#1d1a4a;--ir-dim:#8580b0;--ir-soft:#b8b3ff;--ir-pri:#8f8df7;--ir-pri-ink:#1d1a4a;--ir-acc:#ff5fa8;--ir-track:#c9cbe0;--ir-r:15px;--ir-bw:3.2px;--ir-sh:6px 7px 0 var(--ir-soft);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-ink);--ir-fill:var(--ir-acc);--ir-on-pri:#fff;';
+// :where() keeps these at no specificity, so a page's own :root { --ir-acc: ... } wins.
 const pageCss = `:where(:root){${VARS}}
-canvas.sakuga-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
+canvas.irina-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
 document.head.append(Object.assign(document.createElement('style'), { textContent: pageCss }));
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -89,7 +89,7 @@ let g = null, dpr = 1;
 const front = { c: null, g: null, live: [], dirty: false }, layers = [front];
 function ensureFront() {
   if (front.c || !document.body) return;
-  front.c = Object.assign(document.createElement('canvas'), { className: 'sakuga-fx' }); front.c.setAttribute('aria-hidden', 'true');
+  front.c = Object.assign(document.createElement('canvas'), { className: 'irina-fx' }); front.c.setAttribute('aria-hidden', 'true');
   document.body.append(front.c); front.g = front.c.getContext('2d'); size();
 }
 function size() { dpr = Math.min(2.5, devicePixelRatio || 1); if (front.c) { front.c.width = innerWidth * dpr; front.c.height = innerHeight * dpr; } }
@@ -279,9 +279,9 @@ function squashy(el, { low = 0.82, k = 520, d = 15, wide = 0.55 } = {}) {
   return { s, pop, tilt, step(dt) { const y = s.step(dt), p = pop.step(dt), r = tilt.step(dt), still = Math.abs(y - 1) < 0.001 && Math.abs(s.v) < 0.01 && Math.abs(p - 1) < 0.001 && Math.abs(r) < 0.02;
     el.style.transform = still ? '' : `rotate(${r}deg) scale(${(1 + (1 - y) * wide) * p}, ${y * p})`; } };
 }
-const BASE_CSS = `:host{display:inline-block;position:relative;isolation:isolate;vertical-align:middle;color:var(--sk-ink);font:500 15px/1.4 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+const BASE_CSS = `:host{display:inline-block;position:relative;isolation:isolate;vertical-align:middle;color:var(--ir-ink);font:500 15px/1.4 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 :host([hidden]){display:none}*{box-sizing:border-box}button,input{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
-:focus-visible{outline:2.5px solid var(--sk-acc);outline-offset:3px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:focus-visible{outline:2.5px solid var(--ir-acc);outline-offset:3px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 canvas.back{position:absolute;left:-160px;top:-160px;width:calc(100% + 320px);height:calc(100% + 320px);pointer-events:none;z-index:-1}`;
 // The base for every component: a shadow root built on first connect, one frame callback on the shared clock while it is on the page.
 class Base extends HTMLElement {
@@ -301,7 +301,7 @@ class Base extends HTMLElement {
 }
 const define = (tag, cls) => { if (!customElements.get(tag)) customElements.define(tag, cls); };
 
-const api = window.SakugaFX = {
+const api = window.IrinaFX = {
   version: 1, paused: false,
   get P() { return P; }, get calm() { return calm; }, get now() { return now; },
   TAU, clamp, lerp, rnd, Spring,
@@ -310,6 +310,6 @@ const api = window.SakugaFX = {
   at, esc, squashy, Base, define,
 };
 })();
-// <<< sakuga core
-component(window.SakugaFX);
+// <<< irina core
+component(window.IrinaFX);
 })();

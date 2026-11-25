@@ -2,7 +2,7 @@
 
 > Ordinary UI controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, slashes, splashes) with manga sound-effect lettering, on one canvas over the page. Each is one plain script that registers a custom element: no dependencies, no build step, no other files to fetch. MIT licensed.
 
-Live gallery: https://github.com/dayy4dev/irina-vfx
+Live gallery: https://dayy4dev.github.io/irina-vfx/
 Source: https://github.com/dayy4dev/irina-vfx
 
 ## Drop-in components

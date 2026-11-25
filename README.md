@@ -47,6 +47,7 @@ Every effect is drawn in code on a fixed canvas over the page (plus per-componen
 
 ## Try them
 
+Live demo (GitHub Pages): https://dayy4dev.github.io/irina-vfx/  
 Repo: https://github.com/dayy4dev/irina-vfx
 
 Run locally:

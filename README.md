@@ -103,6 +103,10 @@ An agent with the skill gets a reasonable first pass. These took many rounds of 
 - **Effects behind a control are drawn inside it** (the button's and the progress bar's bursts, the five-star burst) and are cut off by a parent with `overflow: hidden`.
 - **Reduced motion** turns every effect off; the springs and the state changes stay.
 
+## Credits
+
+Originally created by **Justin Finkelman** ([finktheartist](https://github.com/finktheartist)) as [Sakuga VFX](https://github.com/finktheartist/sakuga-vfx). IrinaFX is a customized fork and rebrand built on top of the original project.
+
 ## License
 
-MIT. See [LICENSE](LICENSE). The sound-effect lettering and the toggle frames were generated with GPT Image (through Higgsfield) for this project.
+MIT. See [LICENSE](LICENSE) (Copyright (c) 2026 Justin Finkelman). The sound-effect lettering and the toggle frames were generated with GPT Image (through Higgsfield) for this project.

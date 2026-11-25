@@ -18,6 +18,9 @@
   .links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
   .pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 13px; border: 1.5px solid var(--line); border-radius: 999px; background: none; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
   .pill:hover { border-color: var(--text); }
+  .pill[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--page); }
+  .motion-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
+  .motion-status { color: var(--mute); font-size: 12.5px; }
   :focus-visible { outline: 2.5px solid #ff5fa8; outline-offset: 3px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 28px; grid-auto-flow: dense; }
   .card { display: flex; flex-direction: column; min-width: 0; border: 1.5px solid var(--line); border-radius: 18px; }
@@ -45,10 +48,14 @@
       <p class="links">
         <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
       </p>
+      <div class="motion-bar">
+        <button class="pill" type="button" id="motionToggle" aria-pressed="false"></button>
+        <span class="motion-status" id="motionStatus"></span>
+      </div>
     </div>
   </header>
   <main class="grid" id="grid"></main>
-  <p class="note">Effects are drawn on one canvas over the page and switch off for <code>prefers-reduced-motion</code>. Every colour is a <code>--ir-*</code> variable you can override.</p>
+  <p class="note">Effects are drawn on one canvas over the page. By default, animations stay active even if Windows disables animations (<code>prefers-reduced-motion</code>); use the toggle above to follow the OS setting. Every colour is a <code>--ir-*</code> variable you can override.</p>
 </div>
 <script src="../button/button.js"></script>
 <script src="../toggle/toggle.js"></script>
@@ -124,6 +131,33 @@ const prompt = (it) => [
   `If you can install skills, install it with: ${SKILL.install}`,
   `Read it before you start. For this job, follow its "Wire it in" and "Check it" sections. If I later ask you to change how it reacts, or to make another control in the same style, use the whole skill.`,
 ].join('\n');
+
+const motionBtn = document.getElementById('motionToggle');
+const motionStatus = document.getElementById('motionStatus');
+const MOTION_KEY = 'irina-fx:respect-motion';
+const osReduce = matchMedia('(prefers-reduced-motion: reduce)');
+function syncMotionUI() {
+  const respect = !!window.IrinaFX?.respectReducedMotion;
+  motionBtn.setAttribute('aria-pressed', String(respect));
+  motionBtn.textContent = respect
+    ? 'Reduced Motion: Follow Windows'
+    : 'Reduced Motion: Ignored (Always Animate)';
+  motionStatus.textContent = osReduce.matches
+    ? (respect ? 'OS prefers-reduced-motion is ON (effects paused)' : 'OS prefers-reduced-motion is ON (ignored)')
+    : 'OS prefers-reduced-motion is OFF';
+}
+try {
+  if (localStorage.getItem(MOTION_KEY) === '1' && window.IrinaFX) window.IrinaFX.respectReducedMotion = true;
+} catch {}
+motionBtn.addEventListener('click', () => {
+  if (!window.IrinaFX) return;
+  const next = !window.IrinaFX.respectReducedMotion;
+  window.IrinaFX.respectReducedMotion = next;
+  try { localStorage.setItem(MOTION_KEY, next ? '1' : '0'); } catch {}
+  syncMotionUI();
+});
+osReduce.addEventListener?.('change', syncMotionUI);
+syncMotionUI();
 
 const grid = document.getElementById('grid');
 for (const it of ITEMS) {

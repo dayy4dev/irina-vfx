@@ -92,7 +92,10 @@ canvas.irina-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 document.head.append(Object.assign(document.createElement('style'), { textContent: pageCss }));
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-let calm = reduce.matches; reduce.addEventListener?.('change', (e) => { calm = e.matches; });
+let respectMotion = false;
+let calm = false;
+const syncCalm = () => { calm = respectMotion && reduce.matches; };
+reduce.addEventListener?.('change', syncCalm);
 
 // ───────── layers ─────────
 // The front layer is one fixed canvas over the whole page. A component can also have a back layer: a canvas inside it, behind the control.
@@ -316,6 +319,9 @@ const define = (tag, cls) => { if (!customElements.get(tag)) customElements.defi
 const api = window.IrinaFX = {
   version: 1, paused: false,
   get P() { return P; }, get calm() { return calm; }, get now() { return now; },
+  get respectReducedMotion() { return respectMotion; },
+  set respectReducedMotion(v) { respectMotion = !!v; syncCalm(); },
+  get prefersReducedMotion() { return reduce.matches; },
   TAU, clamp, lerp, rnd, Spring,
   advance, later, persist, blob, shape, get g() { return g; },
   puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, sfx, hollow, dotted,

@@ -27,7 +27,7 @@
       "name": "toggle",
       "type": "registry:file",
       "title": "Irina Toggle",
-      "description": "A switch whose flip is 43 painted frames: the knob smears across, slams into the end, throws up a splash, and the track floods and settles. The frames are inside the file (about 500 KB). One file, no dependencies, defines <irina-toggle>.",
+      "description": "A procedural manga switch that stretches like a smear frame, floods with accent colour, and lands with concentration lines, a splash, and カチッ. One file, no dependencies, defines <irina-toggle>.",
       "author": "dayy4dev <https://github.com/dayy4dev>",
       "categories": [
         "switch",

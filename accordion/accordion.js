@@ -163,10 +163,11 @@ addEventListener('pointerdown', markGesture, { once: true, capture: true });
 addEventListener('keydown', markGesture, { once: true, capture: true });
 
 // Synthesize short procedural manga audio without external files, gated on a user gesture.
-function playSound(kind = 'pop') {
+function playSound(kind = 'pop', param = 0.5) {
   if (!sound || calm || !userGesture) return;
   const nowMs = performance.now();
-  if (kind !== 'impact' && nowMs - lastSoundAt < 55) return;
+  const minGap = kind === 'slide' ? 42 : 55;
+  if (kind !== 'impact' && nowMs - lastSoundAt < minGap) return;
   lastSoundAt = nowMs;
   const Ctx = window.AudioContext || window.webkitAudioContext;
   if (!Ctx) return;
@@ -205,6 +206,12 @@ function playSound(kind = 'pop') {
         gn.gain.setValueAtTime(0.07, st); gn.gain.exponentialRampToValueAtTime(0.001, st + 0.12);
         o.connect(gn).connect(audioCtx.destination); o.start(st); o.stop(st + 0.13);
       });
+    } else if (kind === 'slide') {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      const f = 340 + clamp(param) * 440;
+      o.type = 'triangle'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.72, t + 0.025);
+      gn.gain.setValueAtTime(0.055, t); ngCleanup(gn, t + 0.028);
+      o.connect(gn).connect(audioCtx.destination); o.start(t); o.stop(t + 0.03);
     } else if (kind === 'snap') {
       const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
       o.type = 'triangle'; o.frequency.setValueAtTime(840, t); o.frequency.exponentialRampToValueAtTime(360, t + 0.038);

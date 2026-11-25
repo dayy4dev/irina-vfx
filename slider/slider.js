@@ -6,7 +6,7 @@
 // Read el.value. It fires input while it moves and change when it is let go. With a name, it is sent with its form.
 (() => {
 function component(fx) {
-const { Spring, clamp, rnd, later, at, esc, puff, lines, shards, slash, burst, ticks, wob, sfx } = fx;
+const { Spring, clamp, rnd, later, at, esc, puff, lines, shards, slash, burst, ticks, wob, sfx, playSound } = fx;
 
 class IrinaSlider extends fx.Base {
   static delegates = true;
@@ -46,10 +46,14 @@ class IrinaSlider extends fx.Base {
   setup() {
     const box = this.box = this.$('.sld'), r = this.r = this.$('input'); this.th = this.$('.th'); this.val = this.$('.val');
     this.s = new Spring(0, 420, 30); this.sync(); this.s.x = this.s.to; this.acc = 0; this.peak = 0; this.said = 0; this.t = 0;
-    r.addEventListener('input', () => this.sync());
+    this.dragging = false; this.dragMoves = 0;
+    r.addEventListener('pointerdown', () => { this.dragging = true; this.dragMoves = 0; });
+    for (const ev of ['pointerup', 'pointercancel']) r.addEventListener(ev, () => { this.dragging = false; });
+    r.addEventListener('input', () => { this.sync(); if (this.dragging && ++this.dragMoves >= 2) playSound('slide', this.frac()); });
     r.addEventListener('change', () => {
+      this.dragging = false;
       const c = at(this.th), dir = Math.sign(this.peak) || 1;
-      if (Math.abs(this.peak) > 1.3) { slash(c.x + dir * 34, c.y, { len: 150, ang: dir > 0 ? 0 : Math.PI, thick: 12, life: 0.5, col: '#b8b3ff' }); burst(c.x + dir * 4, c.y, { r: 24, spikes: 11, life: 0.28 }); shards(c.x + dir * 10, c.y, { n: 4, size: 4, dir: dir > 0 ? 0 : Math.PI, arc: 2.4 }); ticks(c.x + dir * 52, c.y - 30, { dir: dir > 0 ? -0.6 : -2.5, n: 3, r: 4, len: 10 });
+      if (Math.abs(this.peak) > 1.3) { slash(c.x + dir * 34, c.y, { len: 150, ang: dir > 0 ? 0 : Math.PI, thick: 12, life: 0.5 }); burst(c.x + dir * 4, c.y, { r: 24, spikes: 11, life: 0.28 }); shards(c.x + dir * 10, c.y, { n: 4, size: 4, dir: dir > 0 ? 0 : Math.PI, arc: 2.4 }); ticks(c.x + dir * 52, c.y - 30, { dir: dir > 0 ? -0.6 : -2.5, n: 3, r: 4, len: 10 });
         later(520, () => { puff(c.x - dir * 60, c.y - 34, { size: 11, n: 4, vy: -10, life: 0.8 }); puff(c.x - dir * 22, c.y - 22, { size: 6, n: 3, vy: -8, life: 0.6 }); wob(c.x - dir * 82, c.y - 34, { dir: -1, r: 9 }); }); }
       if (this.frac() >= 1 || this.frac() <= 0) shards(c.x, c.y, { n: 5, dir: dir > 0 ? Math.PI : 0, arc: 2 });
       this.peak = 0; this.dispatchEvent(new Event('change', { bubbles: true }));
@@ -64,7 +68,7 @@ class IrinaSlider extends fx.Base {
       this.acc += dt * Math.abs(v) * 20; const c = at(this.th), dir = Math.sign(v), big = Math.min(1, Math.abs(v) / 2.4);
       while (this.acc > 1) { this.acc -= 1; puff(c.x - dir * rnd(14, 30), c.y - rnd(2, 12) - big * 8, { size: rnd(6, 9) + big * 9, n: 4, vx: -dir * rnd(26, 70), vy: -rnd(22, 58) * (0.5 + big), life: rnd(0.7, 1.15) });
         lines(c.x - dir * 16, c.y + rnd(-4, 12), { n: 1, dir: dir > 0 ? Math.PI : 0, len: 50 + big * 50, spread: 2, life: 0.24 }); if (Math.random() < 0.3) shards(c.x - dir * 20, c.y + 6, { n: 1, size: 3.5, speed: 120, dir: dir > 0 ? Math.PI + 0.5 : -0.5, arc: 1 }); }
-      if (Math.abs(v) > 1.5 && this.t - this.said > 1.1) { this.said = this.t; sfx('shu', c.x - dir * 6, c.y - 78, { size: 104, life: 0.75, rot: -0.16, col: '#5a4fd8', edge: '#ffffff' }); }
+      if (this.dragging && this.dragMoves >= 2 && Math.abs(v) > 0.7 && this.t - this.said > 0.75) { this.said = this.t; sfx('shu', c.x - dir * 6, c.y - 78, { size: 104, life: 0.75, rot: -0.16 }); playSound('whoosh'); }
     }
   }
 }
@@ -119,10 +123,11 @@ addEventListener('pointerdown', markGesture, { once: true, capture: true });
 addEventListener('keydown', markGesture, { once: true, capture: true });
 
 // Synthesize short procedural manga audio without external files, gated on a user gesture.
-function playSound(kind = 'pop') {
+function playSound(kind = 'pop', param = 0.5) {
   if (!sound || calm || !userGesture) return;
   const nowMs = performance.now();
-  if (kind !== 'impact' && nowMs - lastSoundAt < 55) return;
+  const minGap = kind === 'slide' ? 42 : 55;
+  if (kind !== 'impact' && nowMs - lastSoundAt < minGap) return;
   lastSoundAt = nowMs;
   const Ctx = window.AudioContext || window.webkitAudioContext;
   if (!Ctx) return;
@@ -161,6 +166,12 @@ function playSound(kind = 'pop') {
         gn.gain.setValueAtTime(0.07, st); gn.gain.exponentialRampToValueAtTime(0.001, st + 0.12);
         o.connect(gn).connect(audioCtx.destination); o.start(st); o.stop(st + 0.13);
       });
+    } else if (kind === 'slide') {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      const f = 340 + clamp(param) * 440;
+      o.type = 'triangle'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.72, t + 0.025);
+      gn.gain.setValueAtTime(0.055, t); ngCleanup(gn, t + 0.028);
+      o.connect(gn).connect(audioCtx.destination); o.start(t); o.stop(t + 0.03);
     } else if (kind === 'snap') {
       const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
       o.type = 'triangle'; o.frequency.setValueAtTime(840, t); o.frequency.exponentialRampToValueAtTime(360, t + 0.038);

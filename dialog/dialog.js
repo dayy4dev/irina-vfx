@@ -12,7 +12,8 @@ class IrinaDialog extends fx.Base {
     :host { display: contents; }
     .bd { position: fixed; inset: 0; z-index: 2147482000; display: grid; place-items: center; padding: 20px; background: rgba(29, 26, 74, .28); visibility: hidden; pointer-events: none; }
     .bd.on { visibility: visible; pointer-events: auto; }
-    .panel { position: relative; width: min(420px, 100%); padding: 22px 24px 20px; border: var(--ir-bw) solid var(--ir-ink); border-radius: 18px; background: var(--ir-card); color: var(--ir-ink); box-shadow: var(--ir-sh); will-change: transform; }
+    .dlg-back { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+    .panel { position: relative; z-index: 1; width: min(420px, 100%); padding: 22px 24px 20px; border: var(--ir-bw) solid var(--ir-ink); border-radius: 18px; background: var(--ir-card); color: var(--ir-ink); box-shadow: var(--ir-sh); will-change: transform; }
     .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
     h2 { margin: 0; font: italic 800 20px/1.15 "Avenir Next", "Nunito", -apple-system, "Segoe UI", system-ui, sans-serif; }
     .x { display: grid; place-items: center; flex: none; width: 32px; height: 32px; padding: 0; border: 2.4px solid var(--ir-ink); border-radius: 50%; background: var(--ir-card); color: var(--ir-ink); font-weight: 900; font-size: 14px; cursor: pointer; }
@@ -35,6 +36,7 @@ class IrinaDialog extends fx.Base {
 
   render() {
     return `<div class="bd" part="backdrop">
+      <canvas class="dlg-back" aria-hidden="true"></canvas>
       <div class="panel" role="dialog" aria-modal="true" aria-labelledby="ir-dlg-title" part="panel">
         <div class="head">
           <h2 id="ir-dlg-title" part="heading">${esc(this.getAttribute('heading') || 'Dialog')}</h2>
@@ -56,15 +58,15 @@ class IrinaDialog extends fx.Base {
     requestAnimationFrame(() => {
       this.closeBtn.focus();
       const c = at(this.panel);
-      burst(c.x, c.y, { r: Math.min(180, c.w * 0.45), spikes: 18, life: 0.42 });
-      shards(c.x, c.y, { n: 10, speed: 240, size: 8, life: 0.8, arc: 6.28, grav: 240 });
+      burst(c.x, c.y, { r: Math.max(240, c.w * 0.65), spikes: 19, life: 0.48, layer: this.back });
+      shards(c.x, c.y, { n: 12, speed: 300, size: 8, life: 0.85, arc: 6.28, grav: 240, layer: this.back });
       for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-        puff(c.x + dx * (c.w / 2 + 6), c.y + dy * (c.h / 2 - 4), { size: rnd(10, 14), n: 4, vx: dx * 36, vy: dy * 24, life: 0.75 });
+        puff(c.x + dx * (c.w / 2 + 10), c.y + dy * (c.h / 2 + 4), { size: rnd(10, 14), n: 4, vx: dx * 38, vy: dy * 24, life: 0.75 });
       }
-      lines(c.x - c.w / 2 - 8, c.y, { n: 5, dir: Math.PI, len: 46, spread: 40 });
-      lines(c.x + c.w / 2 + 8, c.y, { n: 5, dir: 0, len: 46, spread: 40 });
-      sfx('don', c.x, c.y - c.h / 2 - 24, { size: 150, rot: -0.08, life: 0.95 });
-      ticks(c.x + c.w / 2 - 12, c.y - c.h / 2 - 8, { dir: -0.7, n: 3, r: 6, len: 16 });
+      lines(c.x - c.w / 2 - 8, c.y, { n: 5, dir: Math.PI, len: 54, spread: 48, layer: this.back });
+      lines(c.x + c.w / 2 + 8, c.y, { n: 5, dir: 0, len: 54, spread: 48, layer: this.back });
+      sfx('don', c.x, c.y - c.h / 2 - 52, { size: 156, rot: -0.08, life: 0.95 });
+      ticks(c.x + c.w / 2 + 6, c.y - c.h / 2 - 10, { dir: -0.7, n: 3, r: 6, len: 16 });
     });
   }
 
@@ -84,6 +86,7 @@ class IrinaDialog extends fx.Base {
   setup() {
     this.bd = this.$('.bd');
     this.panel = this.$('.panel');
+    this.back = fx.backLayer(this.$('.dlg-back'));
     this.titleEl = this.$('#ir-dlg-title');
     this.closeBtn = this.$('.x');
     this.isOpen = false;
@@ -239,14 +242,14 @@ function burst(x, y, { r = 44, spikes = 13, life = 0.34, layer } = {}) {
   }, layer);
 }
 // chips of crystal: long facets with one edge line, tumbling and falling
-function shards(x, y, { n = 7, speed = 190, size = 5, life = 0.75, dir = -Math.PI / 2, arc = Math.PI, grav = 420 } = {}) {
+function shards(x, y, { n = 7, speed = 190, size = 5, life = 0.75, dir = -Math.PI / 2, arc = Math.PI, grav = 420, layer } = {}) {
   for (let i = 0; i < n; i++) {
     const a = dir + rnd(-arc, arc) / 2, v = speed * rnd(0.5, 1.15), s = size * rnd(0.6, 1.4), spin = rnd(-7, 7), pts = [[-1.4, 0.1], [-0.6, -0.7], [1.2, -0.45], [1.5, 0.15], [0.4, 0.75]].map(([px, py]) => [px * rnd(0.8, 1.2), py * rnd(0.8, 1.2)]);
     add(life * rnd(0.7, 1), (k, t) => {
       const px = x + Math.cos(a) * v * t, py = y + Math.sin(a) * v * t + grav * t * t, sc = s * (1 - inn(clamp((k - 0.6) / 0.4)));
       g.translate(px, py); g.rotate(spin * t + a); const p = new Path2D(); pts.forEach(([u, w], q) => p[q ? 'lineTo' : 'moveTo'](u * sc, w * sc)); p.closePath(); shape(p, 1.1, sc * 0.45, P.fill);
       if (sc > 2.5) { g.strokeStyle = P.line; g.lineWidth = 0.9; g.beginPath(); g.moveTo(pts[1][0] * sc, pts[1][1] * sc); g.lineTo(pts[4][0] * sc, pts[4][1] * sc); g.stroke(); }
-    });
+    }, layer);
   }
 }
 function ring(x, y, { rx = 40, ry = 12, life = 0.5, w = 5 } = {}) {
@@ -277,8 +280,8 @@ function slash(x, y, { len = 110, ang = -0.5, life = 0.42, thick = 15, col } = {
   });
 }
 // speed lines: strokes that shoot out one way and thin away
-function lines(x, y, { n = 7, dir = Math.PI, len = 46, spread = 26, life = 0.3 } = {}) {
-  for (let i = 0; i < n; i++) { const o = rnd(-spread, spread), l = len * rnd(0.5, 1.3), d = rnd(0, 0.25), w = rnd(1, 2.6); add(life, (k) => { const kk = clamp((k - d) / (1 - d)), a = out(kk), b = inn(kk), px = x - Math.sin(dir) * o, py = y + Math.cos(dir) * o; g.strokeStyle = P.line; g.lineWidth = w * (1 - b); g.beginPath(); g.moveTo(px + Math.cos(dir) * l * b * 1.4, py + Math.sin(dir) * l * b * 1.4); g.lineTo(px + Math.cos(dir) * l * (0.2 + a * 1.2), py + Math.sin(dir) * l * (0.2 + a * 1.2)); if (kk > 0) g.stroke(); }); }
+function lines(x, y, { n = 7, dir = Math.PI, len = 46, spread = 26, life = 0.3, layer } = {}) {
+  for (let i = 0; i < n; i++) { const o = rnd(-spread, spread), l = len * rnd(0.5, 1.3), d = rnd(0, 0.25), w = rnd(1, 2.6); add(life, (k) => { const kk = clamp((k - d) / (1 - d)), a = out(kk), b = inn(kk), px = x - Math.sin(dir) * o, py = y + Math.cos(dir) * o; g.strokeStyle = P.line; g.lineWidth = w * (1 - b); g.beginPath(); g.moveTo(px + Math.cos(dir) * l * b * 1.4, py + Math.sin(dir) * l * b * 1.4); g.lineTo(px + Math.cos(dir) * l * (0.2 + a * 1.2), py + Math.sin(dir) * l * (0.2 + a * 1.2)); if (kk > 0) g.stroke(); }, layer); }
 }
 // accent ticks: little wedges that point at something and fly off it
 function ticks(x, y, { n = 3, r = 16, len = 9, dir = -0.9, life = 0.4, fan = 0.42 } = {}) {
@@ -376,7 +379,7 @@ const api = window.IrinaFX = {
   set respectReducedMotion(v) { respectMotion = !!v; syncCalm(); },
   get prefersReducedMotion() { return reduce.matches; },
   TAU, clamp, lerp, rnd, Spring,
-  advance, later, persist, blob, shape, get g() { return g; },
+  advance, later, persist, backLayer, blob, shape, get g() { return g; },
   puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, sfx, hollow, dotted,
   at, esc, squashy, Base, define,
 };

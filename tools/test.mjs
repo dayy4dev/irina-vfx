@@ -33,7 +33,7 @@ let fails = 0;
 const check = (name, ok, got) => { if (!ok) fails++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}${got !== undefined ? `  ->  ${got}` : ''}`); };
 
 check('all sixteen elements are defined', (await ev(`['button','toggle','slider','checkbox','radio','input','tabs','progress','rating','toast','tooltip','select','dialog','accordion','counter','drawer'].every((n) => customElements.get('irina-' + n))`)));
-check('one shared core', (await ev('window.IrinaFX.version')) === 1);
+check('one shared core', (await ev('window.IrinaVFX.version')) === 1);
 { await tap('irina-button[data-demo=primary] >>> .btn'); await sleep(1200); check('button: tap fires click and done() lands the check', +(await ev(`${find('irina-button[data-demo=primary] >>> .btn')}.style.getPropertyValue('--ok')`)) > 0.5); }
 { await tap('irina-toggle >>> .tog'); await sleep(500); check('toggle: tap turns it on', await ev(`document.querySelector('irina-toggle').checked`));
   check('toggle: aria-checked follows', (await ev(`${find('irina-toggle >>> .tog')}.getAttribute('aria-checked')`)) === 'true'); }

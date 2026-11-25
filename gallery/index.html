@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IrinaFX</title>
+<title>IrinaVFX</title>
 <style>
   :root { --page: #ffffff; --text: #1d1a4a; --mute: #8580b0; --line: #dcdaf0; --chip: #f4f3fc; }
   * { box-sizing: border-box; }
@@ -61,7 +61,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>IrinaFX</h1>
+      <h1>IrinaVFX</h1>
       <p class="lede">Seventeen ordinary controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, splashes, slashes) with manga sound-effect lettering. Each one is a single file with no dependencies.</p>
       <p class="links">
         <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
@@ -77,7 +77,7 @@
       <section class="customizer" id="customizer" hidden aria-label="Theme color customizer">
         <div class="customizer-grid" id="swatchGrid"></div>
         <div class="customizer-foot">
-          <p class="customizer-note">Updates both CSS <code>--ir-*</code> variables and Canvas <code>IrinaFX.P</code> live. (<code>&lt;irina-toggle&gt;</code> uses a pre-painted sprite sheet.)</p>
+          <p class="customizer-note">Updates both CSS <code>--ir-*</code> variables and Canvas <code>IrinaVFX.P</code> live. (<code>&lt;irina-toggle&gt;</code> uses a pre-painted sprite sheet.)</p>
           <div class="customizer-acts">
             <span class="copy-msg" id="themeMsg" aria-live="polite"></span>
             <button class="pill" type="button" id="themeReset">Reset</button>
@@ -190,7 +190,7 @@ const motionStatus = document.getElementById('motionStatus');
 const MOTION_KEY = 'irina-fx:respect-motion';
 const osReduce = matchMedia('(prefers-reduced-motion: reduce)');
 function syncMotionUI() {
-  const respect = !!window.IrinaFX?.respectReducedMotion;
+  const respect = !!window.IrinaVFX?.respectReducedMotion;
   motionBtn.setAttribute('aria-pressed', String(respect));
   motionBtn.textContent = respect
     ? 'Reduced Motion: Follow Windows'
@@ -200,12 +200,12 @@ function syncMotionUI() {
     : 'OS prefers-reduced-motion is OFF';
 }
 try {
-  if (localStorage.getItem(MOTION_KEY) === '1' && window.IrinaFX) window.IrinaFX.respectReducedMotion = true;
+  if (localStorage.getItem(MOTION_KEY) === '1' && window.IrinaVFX) window.IrinaVFX.respectReducedMotion = true;
 } catch {}
 motionBtn.addEventListener('click', () => {
-  if (!window.IrinaFX) return;
-  const next = !window.IrinaFX.respectReducedMotion;
-  window.IrinaFX.respectReducedMotion = next;
+  if (!window.IrinaVFX) return;
+  const next = !window.IrinaVFX.respectReducedMotion;
+  window.IrinaVFX.respectReducedMotion = next;
   try { localStorage.setItem(MOTION_KEY, next ? '1' : '0'); } catch {}
   syncMotionUI();
 });
@@ -244,8 +244,8 @@ function applyTheme(t, save = true) {
   r.setProperty('--ir-pri-ink', currentTheme.ink);
   r.setProperty('--ir-soft', currentTheme.soft);
   r.setProperty('--ir-card', currentTheme.card);
-  if (window.IrinaFX?.P) {
-    Object.assign(window.IrinaFX.P, {
+  if (window.IrinaVFX?.P) {
+    Object.assign(window.IrinaVFX.P, {
       fill: currentTheme.card,
       shade: currentTheme.soft,
       line: currentTheme.line,
@@ -305,7 +305,7 @@ document.getElementById('themeReset').addEventListener('click', () => {
 });
 
 document.getElementById('themeCopy').addEventListener('click', async () => {
-  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-ink: ${currentTheme.ink};\n  --ir-pri-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n}\n\n<script>\nObject.assign(window.IrinaFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\n<\/script>`;
+  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-ink: ${currentTheme.ink};\n  --ir-pri-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n}\n\n<script>\nObject.assign(window.IrinaVFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\n<\/script>`;
   let ok = false;
   try { await navigator.clipboard.writeText(snippet); ok = true; } catch {
     const t = Object.assign(document.createElement('textarea'), { value: snippet });

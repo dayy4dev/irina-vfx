@@ -1,4 +1,4 @@
-# IrinaFX
+# IrinaVFX
 
 Ordinary UI controls that react like anime. At rest they are plain. Use one and it squashes and overshoots on springs, and throws drawn effects around itself: smoke puffs, impact bursts, crystal chips, slashes, splashes and smoke rings, with manga sound-effect lettering (ドン!, カチッ, ズザッ). No characters, just the way a key animator would sell a hit.
 
@@ -68,7 +68,7 @@ Or copy the file into your project by hand. Then load it with a plain script tag
 
 Each folder's README lists the attributes, properties and events. The value controls (toggle, slider, checkbox, radio, input, rating) work inside a `<form>` like the native ones.
 
-**How the files share.** Each file carries its own copy of the core (springs, the effects layer, the lettering, about 40 KB). The first one loaded sets `window.IrinaFX` and the others reuse it, so any mix of them on a page shares one canvas and one animation loop. The toggle is about 500 KB because its frames are inside it.
+**How the files share.** Each file carries its own copy of the core (springs, the effects layer, the lettering, about 40 KB). The first one loaded sets `window.IrinaVFX` and the others reuse it, so any mix of them on a page shares one canvas and one animation loop. The toggle is about 500 KB because its frames are inside it.
 
 For agents, [llms.txt](llms.txt) lists every file and what it is. In the gallery each control has its install line and a "Copy a prompt for your agent" button; the prompt points a coding agent at the real file and tells it to wire it in, not redraw it.
 
@@ -105,7 +105,7 @@ An agent with the skill gets a reasonable first pass. These took many rounds of 
 
 ## Credits
 
-Originally created by **Justin Finkelman** ([finktheartist](https://github.com/finktheartist)) as [Sakuga VFX](https://github.com/finktheartist/sakuga-vfx). IrinaFX is a customized fork and rebrand built on top of the original project.
+Originally created by **Justin Finkelman** ([finktheartist](https://github.com/finktheartist)) as [Sakuga VFX](https://github.com/finktheartist/sakuga-vfx). IrinaVFX is a customized fork and rebrand built on top of the original project.
 
 ## License
 

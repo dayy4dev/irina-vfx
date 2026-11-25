@@ -46,12 +46,12 @@ fx.define('irina-toast', IrinaToast);
 }
 
 // >>> irina core (copied from core.js by tools/build.mjs: edit core.js, not this block)
-// IrinaFX core: springs, the effects layer and the lettering, shared by every component.
+// IrinaVFX core: springs, the effects layer and the lettering, shared by every component.
 // Each component file carries a copy of this between its core markers, so any one file works on its own. The first one loaded
-// sets window.IrinaFX and the others use it. Edit this file, then run `node tools/build.mjs` to stamp it into the components.
+// sets window.IrinaVFX and the others use it. Edit this file, then run `node tools/build.mjs` to stamp it into the components.
 (() => {
 'use strict';
-if (window.IrinaFX) return;
+if (window.IrinaVFX) return;
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -298,7 +298,7 @@ class Base extends HTMLElement {
 }
 const define = (tag, cls) => { if (!customElements.get(tag)) customElements.define(tag, cls); };
 
-const api = window.IrinaFX = {
+const api = window.IrinaVFX = {
   version: 1, paused: false,
   get P() { return P; }, get calm() { return calm; }, get now() { return now; },
   get respectReducedMotion() { return respectMotion; },
@@ -311,5 +311,5 @@ const api = window.IrinaFX = {
 };
 })();
 // <<< irina core
-component(window.IrinaFX);
+component(window.IrinaVFX);
 })();

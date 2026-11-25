@@ -1,9 +1,9 @@
 ---
 name: irina-fx
-description: Build, change or wire in a UI control that reacts like anime (squash and overshoot on springs, drawn smoke, impact bursts, slashes and splashes, manga sound-effect lettering), using the IrinaFX core. Use when asked to add one of the irina-* components to an app, to change how one reacts, to re-theme them, or to make a new control in the same style. Covers the core's effects, the rules the set follows, and the frame-by-frame look that has to happen before calling it done.
+description: Build, change or wire in a UI control that reacts like anime (squash and overshoot on springs, drawn smoke, impact bursts, slashes and splashes, manga sound-effect lettering), using the IrinaVFX core. Use when asked to add one of the irina-* components to an app, to change how one reacts, to re-theme them, or to make a new control in the same style. Covers the core's effects, the rules the set follows, and the frame-by-frame look that has to happen before calling it done.
 ---
 
-# IrinaFX
+# IrinaVFX
 
 A Irina control is an ordinary control (a button, a switch, a slider) that is plain at rest and reacts like an anime cut when you use it. The control itself moves on springs; the effects are drawn on one canvas over the page, so they can fly outside the control.
 
@@ -24,7 +24,7 @@ If the job is only to put an existing component into an app, skip to **Wire it i
 
 ## 2. The core
 
-Load `core.js` and everything is on `window.IrinaFX`:
+Load `core.js` and everything is on `window.IrinaVFX`:
 
 - **Motion:** `new Spring(x, stiffness, damping)`, then set `.to` and call `.step(dt)` every frame. `squashy(button, { low, wide })` gives a press that squashes while held and overshoots on release; call its `step(dt)` in `frame()`.
 - **Effects,** all in page coordinates (use `at(el, fx, fy)` to get a point on an element): `burst` (the impact star), `puff` (a smoke puff), `donut` (a smoke ring), `shards` (crystal chips), `slash` (a crescent), `lines` (speed lines), `ticks` (accent wedges), `ring`, `splash`, `kira` (a glint), `wob` (wobble marks), and `sfx(word, x, y, { size })`; pass `...hollow()` or `...dotted()` to `sfx` for the two lettering styles.
@@ -61,7 +61,7 @@ A component that runs without errors has told you nothing about how it reacts.
 
 ## 5. Wire it in
 
-- **One file per component.** Each component file carries a copy of the core between its `// >>> irina core` markers, so it works on its own; the first one loaded sets `window.IrinaFX`, the rest reuse it. When you change the core, run `node tools/build.mjs` in the repo to stamp it into every file.
+- **One file per component.** Each component file carries a copy of the core between its `// >>> irina core` markers, so it works on its own; the first one loaded sets `window.IrinaVFX`, the rest reuse it. When you change the core, run `node tools/build.mjs` in the repo to stamp it into every file.
 - **Load it with a plain script tag,** not as a module, and do not split or rewrite it.
 - **Attributes and properties for state, events for what happened:** `change` for value controls (they also work in forms), `click` for buttons, `irina:done` for progress.
 - **Do not edit the effects to restyle someone else's component.** Set the `--ir-*` variables, or say what needs to look different.

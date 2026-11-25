@@ -21,6 +21,24 @@
   .pill[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--page); }
   .motion-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
   .motion-status { color: var(--mute); font-size: 12.5px; }
+  .theme-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 0; }
+  .theme-label { color: var(--mute); font-size: 12.5px; font-weight: 600; margin-right: 2px; }
+  .pill .dot { width: 10px; height: 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.18); flex: none; }
+  .customizer { margin-top: 14px; padding: 16px; border: 1.5px solid var(--line); border-radius: 16px; background: var(--chip); display: grid; gap: 14px; }
+  .customizer[hidden] { display: none; }
+  .customizer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .swatch { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--page); cursor: pointer; }
+  .swatch:hover { border-color: var(--text); }
+  .swatch input[type="color"] { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 8px; background: none; cursor: pointer; flex: none; }
+  .swatch input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  .swatch input[type="color"]::-webkit-color-swatch { border: 1.5px solid rgba(0,0,0,.15); border-radius: 7px; }
+  .swatch-info { min-width: 0; display: grid; line-height: 1.25; }
+  .swatch-name { font-size: 12.5px; font-weight: 700; }
+  .swatch-hex { font-size: 11.5px; color: var(--mute); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .customizer-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .customizer-note { margin: 0; color: var(--mute); font-size: 12px; }
+  .customizer-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .copy-msg { font-size: 12.5px; color: var(--mute); }
   :focus-visible { outline: 2.5px solid #ff5fa8; outline-offset: 3px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 28px; grid-auto-flow: dense; }
   .card { display: flex; flex-direction: column; min-width: 0; border: 1.5px solid var(--line); border-radius: 18px; }
@@ -52,6 +70,21 @@
         <button class="pill" type="button" id="motionToggle" aria-pressed="false"></button>
         <span class="motion-status" id="motionStatus"></span>
       </div>
+      <div class="theme-bar" id="themeBar">
+        <span class="theme-label">Theme:</span>
+        <button class="pill" type="button" id="customizerToggle" aria-expanded="false">Customize Colors</button>
+      </div>
+      <section class="customizer" id="customizer" hidden aria-label="Theme color customizer">
+        <div class="customizer-grid" id="swatchGrid"></div>
+        <div class="customizer-foot">
+          <p class="customizer-note">Updates both CSS <code>--ir-*</code> variables and Canvas <code>IrinaFX.P</code> live. (<code>&lt;irina-toggle&gt;</code> uses a pre-painted sprite sheet.)</p>
+          <div class="customizer-acts">
+            <span class="copy-msg" id="themeMsg" aria-live="polite"></span>
+            <button class="pill" type="button" id="themeReset">Reset</button>
+            <button class="pill" type="button" id="themeCopy">Copy CSS &amp; JS</button>
+          </div>
+        </div>
+      </section>
     </div>
   </header>
   <main class="grid" id="grid"></main>
@@ -158,6 +191,116 @@ motionBtn.addEventListener('click', () => {
 });
 osReduce.addEventListener?.('change', syncMotionUI);
 syncMotionUI();
+
+const THEME_KEY = 'irina-fx:theme';
+const DEFAULT_THEME = { acc: '#ff5fa8', pri: '#8f8df7', ink: '#1d1a4a', line: '#5a4fd8', soft: '#b8b3ff', card: '#ffffff' };
+const PRESETS = [
+  { id: 'default', name: 'Default', colors: DEFAULT_THEME },
+  { id: 'cyber', name: 'Cyber Cyan', colors: { acc: '#00e5ff', pri: '#5b7cfa', ink: '#12183a', line: '#3b5bdb', soft: '#a5d8ff', card: '#ffffff' } },
+  { id: 'crimson', name: 'Crimson', colors: { acc: '#ff3b5c', pri: '#ff758f', ink: '#2b0d16', line: '#c9184a', soft: '#ffb3c1', card: '#ffffff' } },
+  { id: 'matcha', name: 'Matcha', colors: { acc: '#ff7b54', pri: '#52b788', ink: '#1b3a2b', line: '#2d6a4f', soft: '#b7e4c7', card: '#ffffff' } },
+];
+const SWATCHES = [
+  { key: 'acc', label: 'Accent' },
+  { key: 'pri', label: 'Primary' },
+  { key: 'ink', label: 'Ink' },
+  { key: 'line', label: 'VFX Line' },
+  { key: 'soft', label: 'Shadow / Shade' },
+  { key: 'card', label: 'Card / Fill' },
+];
+let currentTheme = { ...DEFAULT_THEME };
+const themeBar = document.getElementById('themeBar');
+const customizerToggle = document.getElementById('customizerToggle');
+const customizer = document.getElementById('customizer');
+const swatchGrid = document.getElementById('swatchGrid');
+const themeMsg = document.getElementById('themeMsg');
+
+function applyTheme(t, save = true) {
+  currentTheme = { ...DEFAULT_THEME, ...t };
+  const r = document.documentElement.style;
+  r.setProperty('--ir-acc', currentTheme.acc);
+  r.setProperty('--ir-pri', currentTheme.pri);
+  r.setProperty('--ir-ink', currentTheme.ink);
+  r.setProperty('--ir-pri-ink', currentTheme.ink);
+  r.setProperty('--ir-soft', currentTheme.soft);
+  r.setProperty('--ir-card', currentTheme.card);
+  if (window.IrinaFX?.P) {
+    Object.assign(window.IrinaFX.P, {
+      fill: currentTheme.card,
+      shade: currentTheme.soft,
+      line: currentTheme.line,
+      accent: currentTheme.acc,
+      ink: currentTheme.ink,
+      sfx: [currentTheme.ink, currentTheme.card],
+    });
+  }
+  for (const { key } of SWATCHES) {
+    const inp = swatchGrid.querySelector(`[data-key="${key}"]`);
+    if (inp) {
+      inp.value = currentTheme[key];
+      inp.parentElement.querySelector('.swatch-hex').textContent = currentTheme[key];
+    }
+  }
+  for (const btn of themeBar.querySelectorAll('[data-preset]')) {
+    const p = PRESETS.find((x) => x.id === btn.dataset.preset);
+    const match = p && SWATCHES.every(({ key }) => p.colors[key].toLowerCase() === currentTheme[key].toLowerCase());
+    btn.setAttribute('aria-pressed', String(!!match));
+  }
+  if (save) {
+    try { localStorage.setItem(THEME_KEY, JSON.stringify(currentTheme)); } catch {}
+  }
+}
+
+for (const p of PRESETS) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pill';
+  btn.dataset.preset = p.id;
+  btn.innerHTML = `<span class="dot" style="background:${p.colors.acc}"></span>${p.name}`;
+  btn.addEventListener('click', () => { themeMsg.textContent = ''; applyTheme(p.colors); });
+  themeBar.insertBefore(btn, customizerToggle);
+}
+
+for (const { key, label } of SWATCHES) {
+  const lbl = document.createElement('label');
+  lbl.className = 'swatch';
+  lbl.innerHTML = `<input type="color" data-key="${key}" value="${currentTheme[key]}"><span class="swatch-info"><span class="swatch-name">${label}</span><span class="swatch-hex">${currentTheme[key]}</span></span>`;
+  lbl.querySelector('input').addEventListener('input', (e) => {
+    themeMsg.textContent = '';
+    applyTheme({ ...currentTheme, [key]: e.target.value });
+  });
+  swatchGrid.append(lbl);
+}
+
+customizerToggle.addEventListener('click', () => {
+  const open = customizer.hidden;
+  customizer.hidden = !open;
+  customizerToggle.setAttribute('aria-expanded', String(open));
+  customizerToggle.setAttribute('aria-pressed', String(open));
+});
+
+document.getElementById('themeReset').addEventListener('click', () => {
+  themeMsg.textContent = 'Reset to default';
+  applyTheme(DEFAULT_THEME);
+});
+
+document.getElementById('themeCopy').addEventListener('click', async () => {
+  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-ink: ${currentTheme.ink};\n  --ir-pri-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n}\n\n<script>\nObject.assign(window.IrinaFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\n<\/script>`;
+  let ok = false;
+  try { await navigator.clipboard.writeText(snippet); ok = true; } catch {
+    const t = Object.assign(document.createElement('textarea'), { value: snippet });
+    t.style.cssText = 'position:fixed;opacity:0'; document.body.append(t); t.select();
+    try { ok = document.execCommand('copy'); } catch {} t.remove();
+  }
+  themeMsg.textContent = ok ? 'CSS & JS copied' : 'Could not copy here';
+});
+
+try {
+  const saved = JSON.parse(localStorage.getItem(THEME_KEY) || 'null');
+  applyTheme(saved || DEFAULT_THEME, false);
+} catch {
+  applyTheme(DEFAULT_THEME, false);
+}
 
 const grid = document.getElementById('grid');
 for (const it of ITEMS) {

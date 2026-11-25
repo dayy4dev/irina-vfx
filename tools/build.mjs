@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-export const NAMES = ['button', 'toggle', 'slider', 'checkbox', 'radio', 'input', 'tabs', 'progress', 'rating', 'toast', 'tooltip', 'select', 'dialog', 'accordion', 'counter', 'drawer'];
+export const NAMES = ['button', 'toggle', 'slider', 'checkbox', 'radio', 'input', 'tabs', 'progress', 'rating', 'toast', 'tooltip', 'select', 'dialog', 'accordion', 'counter', 'drawer', 'badge'];
 const check = process.argv.includes('--check');
 const core = readFileSync(join(root, 'core.js'), 'utf8').trim();
 const sheet = 'data:image/webp;base64,' + readFileSync(join(root, 'toggle/frames.webp')).toString('base64');

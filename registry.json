@@ -337,6 +337,27 @@
         }
       ],
       "docs": "Irina Drawer is a plain script that registers a custom element. Load /irina-fx/drawer.js with a script tag (not a module), put <irina-drawer heading=\"Menu\">...</irina-drawer>, and call el.show(). Supports side=\"right\" or side=\"left\". More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "badge",
+      "type": "registry:file",
+      "title": "Irina Badge",
+      "description": "A manga stamp badge that slams onto the page with concentration lines, puffs, a sparkle, and custom SFX lettering. One file, no dependencies, defines <irina-badge>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "badge",
+        "manga",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "badge/badge.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/badge.js"
+        }
+      ],
+      "docs": "Irina Badge is a plain script that registers a custom element. Load /irina-fx/badge.js with a script tag (not a module), then use <irina-badge interactive variant=\"accent\" sfx=\"BAM!\">Trigger Stamp</irina-badge>. Call el.stamp() to slam it. More: https://github.com/dayy4dev/irina-fx"
     }
   ]
 }

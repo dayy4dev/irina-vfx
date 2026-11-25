@@ -73,7 +73,7 @@ class Spring {
 // ───────── the palette ─────────
 // P is for the effects; the CSS variables below are for the controls.
 const P = { fill: '#fffdf7', shade: '#d4d0c5', line: '#111111', accent: '#c91832', ink: '#111111', sfx: ['#111111', '#fffdf7'] };
-const VARS = '--ir-card:#fffdf7;--ir-ink:#111111;--ir-dim:#57534a;--ir-soft:#d4d0c5;--ir-pri:#111111;--ir-pri-ink:#fffdf7;--ir-acc:#c91832;--ir-track:#cdc8bc;--ir-r:2px;--ir-bw:3.2px;--ir-sh:5px 5px 0 var(--ir-ink);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-acc);--ir-fill:var(--ir-acc);--ir-on-pri:#fffdf7;';
+const VARS = '--ir-card:#fffdf7;--ir-ink:#111111;--ir-dim:#57534a;--ir-soft:#d4d0c5;--ir-pri:#111111;--ir-pri-ink:#fffdf7;--ir-acc:#c91832;--ir-on-acc:#fffdf7;--ir-track:#cdc8bc;--ir-r:2px;--ir-bw:3.2px;--ir-sh:5px 5px 0 var(--ir-ink);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-acc);--ir-fill:var(--ir-acc);--ir-on-pri:#fffdf7;';
 // :where() keeps these at no specificity, so a page's own :root { --ir-acc: ... } wins.
 const pageCss = `:where(:root){${VARS}}
 canvas.irina-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
@@ -84,11 +84,77 @@ let respectMotion = false;
 let calm = false;
 let mangaTone = true;
 let stepped = true;
+let sound = true;
 let stepAcc = 0;
 let hasNewFx = false;
+let userGesture = false;
+let audioCtx = null;
+let noiseBuf = null;
+let lastSoundAt = 0;
 const STEP_DT = 1 / 20;
 const syncCalm = () => { calm = respectMotion && reduce.matches; };
 reduce.addEventListener?.('change', syncCalm);
+const markGesture = () => { userGesture = true; };
+addEventListener('pointerdown', markGesture, { once: true, capture: true });
+addEventListener('keydown', markGesture, { once: true, capture: true });
+
+// Synthesize short procedural manga audio without external files, gated on a user gesture.
+function playSound(kind = 'pop') {
+  if (!sound || calm || !userGesture) return;
+  const nowMs = performance.now();
+  if (kind !== 'impact' && nowMs - lastSoundAt < 55) return;
+  lastSoundAt = nowMs;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return;
+  try {
+    audioCtx ||= new Ctx();
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    const t = audioCtx.currentTime;
+    const ensureNoise = () => {
+      if (noiseBuf) return noiseBuf;
+      const len = Math.floor(audioCtx.sampleRate * 0.18);
+      noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      return noiseBuf;
+    };
+    if (kind === 'impact') {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.14);
+      gn.gain.setValueAtTime(0.2, t); gn.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      o.connect(gn).connect(audioCtx.destination); o.start(t); o.stop(t + 0.16);
+      const src = audioCtx.createBufferSource(), flt = audioCtx.createBiquadFilter(), ng = audioCtx.createGain();
+      src.buffer = ensureNoise(); flt.type = 'bandpass'; flt.frequency.setValueAtTime(1100, t);
+      ng.gain.setValueAtTime(0.14, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      src.connect(flt).connect(ng).connect(audioCtx.destination); src.start(t); src.stop(t + 0.09);
+    } else if (kind === 'whoosh') {
+      const src = audioCtx.createBufferSource(), flt = audioCtx.createBiquadFilter(), ng = audioCtx.createGain();
+      src.buffer = ensureNoise(); flt.type = 'bandpass'; flt.Q.value = 1.6;
+      flt.frequency.setValueAtTime(1500, t); flt.frequency.exponentialRampToValueAtTime(320, t + 0.14);
+      ng.gain.setValueAtTime(0.09, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      src.connect(flt).connect(ng).connect(audioCtx.destination); src.start(t); src.stop(t + 0.15);
+    } else if (kind === 'sparkle') {
+      [980, 1480].forEach((freq, idx) => {
+        const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+        const st = t + idx * 0.045;
+        o.type = 'sine'; o.frequency.setValueAtTime(freq, st);
+        gn.gain.setValueAtTime(0.07, st); gn.gain.exponentialRampToValueAtTime(0.001, st + 0.12);
+        o.connect(gn).connect(audioCtx.destination); o.start(st); o.stop(st + 0.13);
+      });
+    } else if (kind === 'snap') {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(840, t); o.frequency.exponentialRampToValueAtTime(360, t + 0.038);
+      gn.gain.setValueAtTime(0.07, t); ngCleanup(gn, t + 0.042);
+      o.connect(gn).connect(audioCtx.destination); o.start(t); o.stop(t + 0.045);
+    } else {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(260, t); o.frequency.exponentialRampToValueAtTime(560, t + 0.06);
+      gn.gain.setValueAtTime(0.11, t); gn.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      o.connect(gn).connect(audioCtx.destination); o.start(t); o.stop(t + 0.08);
+    }
+  } catch {}
+}
+function ngCleanup(gn, endAt) { gn.gain.exponentialRampToValueAtTime(0.001, endAt); }
 
 // ───────── layers ─────────
 // The front layer is one fixed canvas over the whole page. A component can also have a back layer: a canvas inside it, behind the control.
@@ -191,6 +257,7 @@ function puff(x, y, { n = 5, size = 13, vx = 0, vy = -18, life = 0.8, spread = 1
 }
 // the impact: accent needles, a star in the shadow tone, and a paper star on top; it leaves by its points thinning to nothing
 function burst(x, y, { r = 44, spikes = 13, life = 0.34, layer } = {}) {
+  playSound('impact');
   const j = Array.from({ length: spikes * 2 }, (_, i) => (i % 2 ? rnd(0.34, 0.5) : rnd(0.75, 1.15))), rot = rnd(TAU), pins = Array.from({ length: 8 }, (_, i) => ({ a: i / 8 * TAU + rnd(0.5), l: rnd(1.25, 1.75), w: rnd(0.03, 0.055) }));
   const star = (R, turn, inner = 1) => { const p = new Path2D(); j.forEach((m, i) => { const a = rot + turn + (i / j.length) * TAU, rr = R * (i % 2 ? m * inner : m); p[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * rr, y + Math.sin(a) * rr); }); p.closePath(); return p; };
   add(life, (k) => {
@@ -212,6 +279,7 @@ function shards(x, y, { n = 7, speed = 190, size = 5, life = 0.75, dir = -Math.P
   }
 }
 function ring(x, y, { rx = 40, ry = 12, life = 0.5, w = 5 } = {}) {
+  playSound('pop');
   add(life, (k) => { const s = out(k), lw = w * (1 - k); g.beginPath(); g.ellipse(x, y, rx * (0.3 + s), ry * (0.3 + s), 0, 0, TAU); g.strokeStyle = P.line; g.lineWidth = lw + 2.4; g.stroke(); g.strokeStyle = P.fill; g.lineWidth = lw; if (lw > 0.3) g.stroke(); });
 }
 // a splash crown: tongues of water rise out of a line and fall back with foam on their tips, drops fly
@@ -230,6 +298,7 @@ function splash(x, y, { w = 34, h = 26, life = 0.7 } = {}) {
 }
 // a slash: a crescent whose head races ahead and whose tail catches up
 function slash(x, y, { len = 110, ang = -0.5, life = 0.42, thick = 15, col } = {}) {
+  playSound('whoosh');
   const R = len * 0.9, cx = x - Math.cos(ang - Math.PI / 2) * R * 0.86, cy = y - Math.sin(ang - Math.PI / 2) * R * 0.86, a0 = ang - Math.PI / 2 - 0.62, sweep = 1.24, c = col || P.accent;
   add(life, (k) => {
     const head = out(clamp(k / 0.42)), tail = inn(clamp((k - 0.22) / 0.78)); if (head - tail < 0.01) return;
@@ -244,6 +313,7 @@ function lines(x, y, { n = 7, dir = Math.PI, len = 46, spread = 26, life = 0.3, 
 }
 // accent ticks: little wedges that point at something and fly off it
 function ticks(x, y, { n = 3, r = 16, len = 9, dir = -0.9, life = 0.4, fan = 0.42 } = {}) {
+  playSound('snap');
   add(life, (k) => { const a = out(clamp(k / 0.5)), b = inn(clamp((k - 0.4) / 0.6)); g.save(); g.fillStyle = P.accent; g.beginPath();
     for (let i = 0; i < n; i++) { const an = dir + (i - (n - 1) / 2) * fan, r0 = r + len * b * 1.25, r1 = r + len * a * 1.25, hw = 0.07 + 2.2 / (r1 + 8); if (r1 - r0 < 0.6) continue; g.moveTo(x + Math.cos(an) * r0, y + Math.sin(an) * r0); g.lineTo(x + Math.cos(an - hw) * r1, y + Math.sin(an - hw) * r1); g.lineTo(x + Math.cos(an + hw) * r1, y + Math.sin(an + hw) * r1); g.closePath(); }
     g.fill(); g.restore(); });
@@ -261,6 +331,7 @@ function wob(x, y, { dir = 1, r = 16, life = 0.45 } = {}) {
 }
 // a glint: a four-pointed sparkle that opens and closes
 function kira(x, y, { r = 9, life = 0.6, col } = {}) {
+  playSound('sparkle');
   add(life, (k, t) => { const s = r * Math.sin(k * Math.PI) ** 0.6, q = s * 0.16, p = new Path2D(); g.translate(x, y); g.rotate(Math.sin(t * 3) * 0.2); p.moveTo(0, -s); p.quadraticCurveTo(q, -q, s * 0.7, 0); p.quadraticCurveTo(q, q, 0, s); p.quadraticCurveTo(-q, q, -s * 0.7, 0); p.quadraticCurveTo(-q, -q, 0, -s);
     g.save(); g.fillStyle = col || P.fill; g.fill(p); g.restore(); g.strokeStyle = P.accent; g.lineWidth = 2; g.stroke(p); });
 }
@@ -389,6 +460,9 @@ const api = window.IrinaVFX = {
   set mangaTone(v) { mangaTone = !!v; },
   get stepped() { return stepped; },
   set stepped(v) { stepped = !!v; if (!stepped) stepAcc = 0; },
+  get sound() { return sound; },
+  set sound(v) { sound = !!v; },
+  playSound,
   TAU, clamp, lerp, rnd, Spring,
   advance, later, persist, backLayer, blob, shape, get g() { return g; },
   puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, shuchu, flash, sfx, hollow, dotted,

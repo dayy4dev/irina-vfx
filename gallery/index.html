@@ -233,6 +233,21 @@
   }
   .note code { padding: 1px 5px; border: 1px solid var(--line); border-radius: var(--r); background: var(--chip); color: var(--text); font-size: 12.5px; }
   .toastwrap { position: relative; display: grid; justify-items: center; gap: 22px; }
+  .sfx-lab { display: grid; gap: 14px; width: 100%; max-width: 640px; }
+  .sfx-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+  .sfx-field { flex: 1 1 200px; display: grid; gap: 4px; }
+  .sfx-field label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--mute); }
+  .sfx-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 2.5px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    color: var(--text);
+    font: 800 15px/1.2 "Inter", system-ui, sans-serif;
+  }
+  .sfx-presets { display: flex; flex-wrap: wrap; gap: 8px; }
 
   @media (max-width: 720px) {
     .wrap { padding: 16px 12px 64px; }
@@ -251,7 +266,7 @@
           <h1>IrinaVFX</h1>
           <span class="edition-mark">Manga Edition</span>
         </div>
-        <p class="lede">Sixteen ink-framed web controls driven by spring physics, screentone clouds, manga concentration lines, and comic sound-effect lettering on a single page-wide canvas.</p>
+        <p class="lede">Seventeen ink-framed web controls driven by spring physics, screentone clouds, manga concentration lines, procedural audio, and comic sound-effect lettering on a single page-wide canvas.</p>
       </div>
       <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">GitHub Repo <span aria-hidden="true">&#8599;</span></a>
     </div>
@@ -266,6 +281,7 @@
         <span class="bar-label">VFX Style</span>
         <button class="pill" type="button" id="toneToggle" aria-pressed="true"></button>
         <button class="pill" type="button" id="stepToggle" aria-pressed="true"></button>
+        <button class="pill" type="button" id="soundToggle" aria-pressed="true"></button>
         <button class="pill" type="button" id="motionToggle" aria-pressed="false"></button>
         <span class="motion-status" id="motionStatus"></span>
       </div>
@@ -305,6 +321,7 @@
 <script src="../accordion/accordion.js"></script>
 <script src="../counter/counter.js"></script>
 <script src="../drawer/drawer.js"></script>
+<script src="../badge/badge.js"></script>
 <script>
 const REPO = 'dayy4dev/irina-fx';
 const ITEMS = [
@@ -325,6 +342,7 @@ const ITEMS = [
   { id: 'accordion', name: 'Accordion', tag: 'irina-accordion', how: 'Click the header to expand or collapse.', html: '<irina-accordion heading="Special Notes">Every effect is drawn in code on a fixed canvas overlay, with zero external dependencies.</irina-accordion>' },
   { id: 'counter', name: 'Counter', tag: 'irina-counter', how: 'Click to like and pop the counter.', html: '<irina-counter count="12" label="Like"></irina-counter>' },
   { id: 'drawer', name: 'Drawer', tag: 'irina-drawer', how: 'Open the slide-over drawer.', html: '<div><irina-button variant="secondary" data-demo="drawer">Open Drawer</irina-button><irina-drawer heading="Navigation"><p style="margin-top:0">Slide-over sheet content. Press Escape, click outside, or press close.</p></irina-drawer></div>' },
+  { id: 'badge', name: 'Badge', tag: 'irina-badge', how: 'Click the interactive stamp badge.', html: '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center"><irina-badge>NEW</irina-badge><irina-badge variant="ink">MANGA</irina-badge><irina-badge interactive variant="accent" sfx="BAM!">Trigger Stamp</irina-badge></div>' },
 ];
 
 const WIRE = {
@@ -366,6 +384,8 @@ const WIRE = {
     'Read or set el.count and el.active. Fires change with { detail: { count, active } }. With a name attribute it is sent with its form.'],
   drawer: ['Put <irina-drawer heading="..." side="right">...</irina-drawer> on the page and call el.show() to open it.',
     'Supports side="right" (default) or side="left". Closes on Escape, backdrop click, or the close button, and fires a close event.'],
+  badge: ['Use <irina-badge>NEW</irina-badge> for a static manga stamp, or <irina-badge interactive variant="accent" sfx="BAM!">Trigger Stamp</irina-badge> for a clickable one.',
+    'Supports variant="default" | "accent" | "ink", custom sfx word, and el.stamp() to slam it programmatically.'],
 };
 const SKILL = { url: new URL('../skills/irina-fx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
 const fileUrl = (id) => new URL(`../${id}/${id}.js`, location.href).href;
@@ -386,9 +406,11 @@ const motionBtn = document.getElementById('motionToggle');
 const motionStatus = document.getElementById('motionStatus');
 const toneBtn = document.getElementById('toneToggle');
 const stepBtn = document.getElementById('stepToggle');
+const soundBtn = document.getElementById('soundToggle');
 const MOTION_KEY = 'irina-fx:respect-motion';
 const TONE_KEY = 'irina-fx:manga-tone';
 const STEP_KEY = 'irina-fx:stepped';
+const SOUND_KEY = 'irina-fx:sound';
 const osReduce = matchMedia('(prefers-reduced-motion: reduce)');
 
 function syncEngineUI() {
@@ -406,6 +428,10 @@ function syncEngineUI() {
   const stepped = !!window.IrinaVFX?.stepped;
   stepBtn.setAttribute('aria-pressed', String(stepped));
   stepBtn.textContent = stepped ? 'Cadence: Cel 20fps' : 'Cadence: Smooth 60fps';
+
+  const snd = !!window.IrinaVFX?.sound;
+  soundBtn.setAttribute('aria-pressed', String(snd));
+  soundBtn.textContent = snd ? 'Sound FX: ON' : 'Sound FX: OFF';
 }
 
 try {
@@ -413,6 +439,7 @@ try {
     if (localStorage.getItem(MOTION_KEY) === '1') window.IrinaVFX.respectReducedMotion = true;
     if (localStorage.getItem(TONE_KEY) === '0') window.IrinaVFX.mangaTone = false;
     if (localStorage.getItem(STEP_KEY) === '0') window.IrinaVFX.stepped = false;
+    if (localStorage.getItem(SOUND_KEY) === '0') window.IrinaVFX.sound = false;
   }
 } catch {}
 
@@ -435,6 +462,14 @@ stepBtn.addEventListener('click', () => {
   const next = !window.IrinaVFX.stepped;
   window.IrinaVFX.stepped = next;
   try { localStorage.setItem(STEP_KEY, next ? '1' : '0'); } catch {}
+  syncEngineUI();
+});
+soundBtn.addEventListener('click', () => {
+  if (!window.IrinaVFX) return;
+  const next = !window.IrinaVFX.sound;
+  window.IrinaVFX.sound = next;
+  try { localStorage.setItem(SOUND_KEY, next ? '1' : '0'); } catch {}
+  if (next) window.IrinaVFX.playSound('pop');
   syncEngineUI();
 });
 osReduce.addEventListener?.('change', syncEngineUI);
@@ -523,6 +558,7 @@ function applyTheme(t, save = true) {
   r.setProperty('--sh', shVal);
 
   r.setProperty('--ir-acc', currentTheme.acc);
+  r.setProperty('--ir-on-acc', contrastInk(currentTheme.acc));
   r.setProperty('--ir-pri', currentTheme.pri);
   r.setProperty('--ir-on-pri', currentTheme.onPri || '#fffdf7');
   r.setProperty('--ir-pri-ink', currentTheme.onPri || '#fffdf7');
@@ -609,7 +645,7 @@ document.getElementById('themeCopy').addEventListener('click', async () => {
   const sharp = currentTheme.sharp !== false;
   const rad = sharp ? '2px' : '15px';
   const sh = sharp ? `5px 5px 0 ${currentTheme.ink}` : `6px 7px 0 ${currentTheme.soft}`;
-  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-on-pri: ${currentTheme.onPri || '#fffdf7'};\n  --ir-pri-ink: ${currentTheme.onPri || '#fffdf7'};\n  --ir-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n  --ir-r: ${rad};\n  --ir-sh: ${sh};\n}\n\n<script>\nObject.assign(window.IrinaVFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\nwindow.IrinaVFX.mangaTone = ${!!window.IrinaVFX?.mangaTone};\nwindow.IrinaVFX.stepped = ${!!window.IrinaVFX?.stepped};\n<\/script>`;
+  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-on-acc: ${contrastInk(currentTheme.acc)};\n  --ir-pri: ${currentTheme.pri};\n  --ir-on-pri: ${currentTheme.onPri || '#fffdf7'};\n  --ir-pri-ink: ${currentTheme.onPri || '#fffdf7'};\n  --ir-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n  --ir-r: ${rad};\n  --ir-sh: ${sh};\n}\n\n<script>\nObject.assign(window.IrinaVFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\nwindow.IrinaVFX.mangaTone = ${!!window.IrinaVFX?.mangaTone};\nwindow.IrinaVFX.stepped = ${!!window.IrinaVFX?.stepped};\nwindow.IrinaVFX.sound = ${!!window.IrinaVFX?.sound};\n<\/script>`;
   let ok = false;
   try { await navigator.clipboard.writeText(snippet); ok = true; } catch {
     const t = Object.assign(document.createElement('textarea'), { value: snippet });
@@ -646,8 +682,68 @@ ITEMS.forEach((it, idx) => {
   else if (it.tag === 'irina-counter') el.addEventListener('change', (e) => say(`count: ${e.detail.count} (${e.detail.active ? 'active' : 'off'})`));
   else if (it.tag === 'irina-progress') el.addEventListener('irina:done', () => say('irina:done'));
   else if (it.tag === 'irina-tabs') el.addEventListener('change', (e) => say(`Tab: ${e.detail.label}`));
+  else if (it.tag === 'irina-badge') card.querySelector('irina-badge[interactive]').addEventListener('stamp', (e) => say(`stamp: ${e.detail.sfx}`));
   else el.addEventListener('change', () => say(`change: ${it.tag === 'irina-toggle' || it.tag === 'irina-checkbox' ? (el.checked ? 'on' : 'off') : el.value}`));
 });
+
+const sfxCard = document.createElement('section');
+sfxCard.className = 'card wide';
+sfxCard.id = 'sfxPlayground';
+sfxCard.innerHTML = `<div class="card-head"><h2>SFX Playground<span>IrinaVFX.sfx()</span></h2><span class="koma-no">P.${String(ITEMS.length + 1).padStart(2, '0')}</span></div>
+  <p class="how">Type any sound-effect word or pick a katakana preset, choose a lettering style, and fire a manga impact.</p>
+  <div class="stage">
+    <div class="sfx-lab">
+      <div class="sfx-row">
+        <div class="sfx-field">
+          <label for="sfxWord">SFX Word</label>
+          <input class="sfx-input" id="sfxWord" type="text" value="BAM!" maxlength="16" placeholder="e.g. BAM!, ZAP!, don">
+        </div>
+        <button class="pill" type="button" id="sfxStyleBtn" aria-pressed="false">Style: Solid</button>
+        <button class="pill" type="button" id="sfxFireBtn">Fire Manga Impact</button>
+      </div>
+      <div class="sfx-presets" aria-label="SFX presets">
+        ${['don', 'gogo', 'kachi', 'pon', 'shu', 'zuza', 'BAM!', 'ZAP!'].map((w) => `<button class="pill" type="button" data-sfx="${w}">${w}</button>`).join('')}
+      </div>
+    </div>
+  </div>
+  <p class="said" id="sfxSaid" aria-live="polite"></p>`;
+grid.append(sfxCard);
+
+const sfxInput = document.getElementById('sfxWord');
+const sfxStyleBtn = document.getElementById('sfxStyleBtn');
+const sfxFireBtn = document.getElementById('sfxFireBtn');
+const sfxSaid = document.getElementById('sfxSaid');
+const SFX_STYLES = ['solid', 'hollow', 'dotted'];
+let sfxStyleIdx = 0;
+
+function firePlaygroundSfx() {
+  if (!window.IrinaVFX) return;
+  const word = (sfxInput.value || 'BAM!').trim() || 'BAM!';
+  const fx = window.IrinaVFX;
+  const c = fx.at(sfxFireBtn);
+  const st = SFX_STYLES[sfxStyleIdx];
+  const opts = st === 'hollow' ? fx.hollow() : st === 'dotted' ? fx.dotted() : {};
+  fx.flash(c.x, c.y, { w: c.w + 24, h: c.h + 16 });
+  fx.shuchu(c.x, c.y, { r: 160, inner: 42, n: 24, life: 0.28 });
+  fx.burst(c.x, c.y, { r: 84, spikes: 15, life: 0.42 });
+  fx.shards(c.x, c.y, { n: 9, speed: 240, size: 7, arc: 6.28 });
+  fx.puff(c.x - c.w / 2, c.y + 8, { size: 11, n: 4, vx: -36, vy: -12 });
+  fx.puff(c.x + c.w / 2, c.y + 8, { size: 11, n: 4, vx: 36, vy: -12 });
+  fx.sfx(word, c.x, c.y - 68, { size: 156, rot: -0.1, life: 1.0, ...opts });
+  sfxSaid.textContent = `Fired "${word}" (${st})`;
+}
+
+sfxStyleBtn.addEventListener('click', () => {
+  sfxStyleIdx = (sfxStyleIdx + 1) % SFX_STYLES.length;
+  const label = SFX_STYLES[sfxStyleIdx];
+  sfxStyleBtn.textContent = 'Style: ' + label[0].toUpperCase() + label.slice(1);
+  sfxStyleBtn.setAttribute('aria-pressed', String(sfxStyleIdx !== 0));
+});
+sfxFireBtn.addEventListener('click', firePlaygroundSfx);
+sfxInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') firePlaygroundSfx(); });
+for (const btn of sfxCard.querySelectorAll('[data-sfx]')) {
+  btn.addEventListener('click', () => { sfxInput.value = btn.dataset.sfx; firePlaygroundSfx(); });
+}
 
 async function copy(text, btn, said) {
   let ok = false;

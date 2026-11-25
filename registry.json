@@ -232,6 +232,111 @@
         }
       ],
       "docs": "Irina Tooltip is a plain script that registers a custom element. Load /irina-fx/tooltip.js with a script tag (not a module), then use <irina-tooltip text=\"Helpful hint!\"></irina-tooltip>. Opens on hover, focus and tap; Escape closes it. More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "select",
+      "type": "registry:file",
+      "title": "Irina Select",
+      "description": "A dropdown select whose trigger squashes, menu springs open with puffs, and picking an option lands a glint and カチッ. One file, no dependencies, defines <irina-select>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "select",
+        "dropdown",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "select/select.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/select.js"
+        }
+      ],
+      "docs": "Irina Select is a plain script that registers a custom element. Load /irina-fx/select.js with a script tag (not a module), then use <irina-select label=\"Weapon\"><option value=\"katana\">Katana</option></irina-select>. Read el.value and listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "dialog",
+      "type": "registry:file",
+      "title": "Irina Dialog",
+      "description": "A modal dialog that springs into view with speed lines, smoke puffs, shards, and ドン!. One file, no dependencies, defines <irina-dialog>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "dialog",
+        "modal",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "dialog/dialog.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/dialog.js"
+        }
+      ],
+      "docs": "Irina Dialog is a plain script that registers a custom element. Load /irina-fx/dialog.js with a script tag (not a module), put <irina-dialog heading=\"Title\">...</irina-dialog>, and call el.show(). Closes on Escape, backdrop click, or close button. More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "accordion",
+      "type": "registry:file",
+      "title": "Irina Accordion",
+      "description": "A collapsible panel whose header squashes, body springs open, and bottom corners land with smoke puffs and ポン. One file, no dependencies, defines <irina-accordion>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "accordion",
+        "collapsible",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "accordion/accordion.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/accordion.js"
+        }
+      ],
+      "docs": "Irina Accordion is a plain script that registers a custom element. Load /irina-fx/accordion.js with a script tag (not a module), then use <irina-accordion heading=\"Details\">...</irina-accordion>. Read el.open and listen for change. More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "counter",
+      "type": "registry:file",
+      "title": "Irina Counter",
+      "description": "A like/upvote counter button that pops with a burst, shards, glint, and ポン when activated. One file, no dependencies, defines <irina-counter>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "counter",
+        "like",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "counter/counter.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/counter.js"
+        }
+      ],
+      "docs": "Irina Counter is a plain script that registers a custom element. Load /irina-fx/counter.js with a script tag (not a module), then use <irina-counter count=\"12\" label=\"Like\"></irina-counter>. Read el.count and el.active; listen for change. Works in forms with a name. More: https://github.com/dayy4dev/irina-fx"
+    },
+    {
+      "name": "drawer",
+      "type": "registry:file",
+      "title": "Irina Drawer",
+      "description": "A slide-over drawer/sheet that streaks in with speed lines, lands in dust with ズザッ, and slides away when dismissed. One file, no dependencies, defines <irina-drawer>.",
+      "author": "dayy4dev <https://github.com/dayy4dev>",
+      "categories": [
+        "drawer",
+        "sheet",
+        "anime",
+        "animation"
+      ],
+      "files": [
+        {
+          "path": "drawer/drawer.js",
+          "type": "registry:file",
+          "target": "~/public/irina-fx/drawer.js"
+        }
+      ],
+      "docs": "Irina Drawer is a plain script that registers a custom element. Load /irina-fx/drawer.js with a script tag (not a module), put <irina-drawer heading=\"Menu\">...</irina-drawer>, and call el.show(). Supports side=\"right\" or side=\"left\". More: https://github.com/dayy4dev/irina-fx"
     }
   ]
 }

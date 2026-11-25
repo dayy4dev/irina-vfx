@@ -62,7 +62,7 @@
   <header>
     <div>
       <h1>IrinaFX</h1>
-      <p class="lede">Twelve ordinary controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, splashes, slashes) with manga sound-effect lettering. Each one is a single file with no dependencies.</p>
+      <p class="lede">Seventeen ordinary controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, splashes, slashes) with manga sound-effect lettering. Each one is a single file with no dependencies.</p>
       <p class="links">
         <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
       </p>
@@ -101,6 +101,11 @@
 <script src="../rating/rating.js"></script>
 <script src="../toast/toast.js"></script>
 <script src="../tooltip/tooltip.js"></script>
+<script src="../select/select.js"></script>
+<script src="../dialog/dialog.js"></script>
+<script src="../accordion/accordion.js"></script>
+<script src="../counter/counter.js"></script>
+<script src="../drawer/drawer.js"></script>
 <script>
 // The gallery: every control live on one page, with its install line and a prompt that hands a coding agent the real file.
 const REPO = 'dayy4dev/irina-fx';
@@ -117,6 +122,11 @@ const ITEMS = [
   { id: 'rating', name: 'Rating', tag: 'irina-rating', how: 'Give it five.', html: '<irina-rating label="Rating"></irina-rating>' },
   { id: 'toast', name: 'Toast', tag: 'irina-toast', how: 'Press Save.', html: '<div class="toastwrap"><irina-button variant="secondary" data-demo="save">Save</irina-button><irina-toast></irina-toast></div>' },
   { id: 'tooltip', name: 'Tooltip', tag: 'irina-tooltip', how: 'Hover, focus or tap the button.', html: '<irina-tooltip text="Helpful hint!"></irina-tooltip>' },
+  { id: 'select', name: 'Select', tag: 'irina-select', how: 'Click to open and pick an option.', html: '<irina-select label="Weapon"><option value="katana">Katana</option><option value="kunai">Kunai</option><option value="shuriken">Shuriken</option></irina-select>' },
+  { id: 'dialog', name: 'Dialog', tag: 'irina-dialog', how: 'Open the modal dialog.', html: '<div><irina-button variant="secondary" data-demo="dialog">Open Dialog</irina-button><irina-dialog heading="Special Attack"><p style="margin:0">Ready to trigger the final finisher?</p><irina-button slot="actions" data-demo="dialog-ok">Confirm</irina-button></irina-dialog></div>' },
+  { id: 'accordion', name: 'Accordion', tag: 'irina-accordion', how: 'Click the header to expand or collapse.', html: '<irina-accordion heading="Special Notes">Every effect is drawn in code on one fixed canvas over the page, with zero external dependencies.</irina-accordion>' },
+  { id: 'counter', name: 'Counter', tag: 'irina-counter', how: 'Click to like and pop the counter.', html: '<irina-counter count="12" label="Like"></irina-counter>' },
+  { id: 'drawer', name: 'Drawer', tag: 'irina-drawer', how: 'Open the slide-over drawer.', html: '<div><irina-button variant="secondary" data-demo="drawer">Open Drawer</irina-button><irina-drawer heading="Navigation"><p style="margin-top:0">Slide-over sheet content. Press Escape, click outside, or press ✕ to close.</p></irina-drawer></div>' },
 ];
 
 // What each prompt says about wiring its component in. The rest of the prompt is the same for all of them.
@@ -149,6 +159,16 @@ const WIRE = {
     'The element keeps its place on the page while the toast is hidden. Position it yourself, for example position: fixed; left: 24px; bottom: 24px.'],
   tooltip: ['Use <irina-tooltip text="..." label="..."></irina-tooltip> next to the thing it explains. text is the hint; label is what a screen reader calls the button ("Help" by default).',
     'It opens on hover, focus and tap, and Escape closes it. Whatever is inside the element replaces the "?" on the button.'],
+  select: ['List the choices as <option>s inside it: <irina-select label="..."><option value="a">Option A</option>...</irina-select>.',
+    'Read and set el.value. It fires change. With a name attribute it is sent with its form. Set --ir-select-width to change its width.'],
+  dialog: ['Put <irina-dialog heading="...">...</irina-dialog> on the page (optional slot="actions" for footer buttons) and call el.show() to open it.',
+    'Closes on Escape, backdrop click, or the close button, and fires a close event.'],
+  accordion: ['Wrap content inside <irina-accordion heading="...">...</irina-accordion>.',
+    'Read or set el.open (or use the open attribute). Fires change with { detail: { open } }. Set --ir-accordion-width to change its width.'],
+  counter: ['Use <irina-counter count="12" label="Like"></irina-counter> for a like/upvote counter button.',
+    'Read or set el.count and el.active. Fires change with { detail: { count, active } }. With a name attribute it is sent with its form.'],
+  drawer: ['Put <irina-drawer heading="..." side="right">...</irina-drawer> on the page and call el.show() to open it.',
+    'Supports side="right" (default) or side="left". Closes on Escape, backdrop click, or the close button, and fires a close event.'],
 };
 const SKILL = { url: new URL('../skills/irina-fx/SKILL.md', location.href).href, install: `npx skills add ${REPO}` };
 const fileUrl = (id) => new URL(`../${id}/${id}.js`, location.href).href;
@@ -315,6 +335,10 @@ for (const it of ITEMS) {
   if (it.tag === 'irina-button' && el.dataset.demo === 'primary') el.addEventListener('click', () => { say('Clicked'); setTimeout(() => el.done(), 760); });
   else if (it.tag === 'irina-button') el.addEventListener('click', () => say('Clicked'));
   else if (it.tag === 'irina-toast') card.querySelector('[data-demo=save]').addEventListener('click', () => el.show('Saved successfully!'));
+  else if (it.tag === 'irina-dialog') { card.querySelector('[data-demo=dialog]').addEventListener('click', () => { el.show(); say('open'); }); card.querySelector('[data-demo=dialog-ok]').addEventListener('click', () => { el.close(); say('confirmed'); }); el.addEventListener('close', () => { if (said.textContent !== 'confirmed') say('closed'); }); }
+  else if (it.tag === 'irina-drawer') { card.querySelector('[data-demo=drawer]').addEventListener('click', () => { el.show(); say('open'); }); el.addEventListener('close', () => say('closed')); }
+  else if (it.tag === 'irina-accordion') el.addEventListener('change', (e) => say(`open: ${e.detail.open}`));
+  else if (it.tag === 'irina-counter') el.addEventListener('change', (e) => say(`count: ${e.detail.count} (${e.detail.active ? 'active' : 'off'})`));
   else if (it.tag === 'irina-progress') el.addEventListener('irina:done', () => say('irina:done'));
   else if (it.tag === 'irina-tabs') el.addEventListener('change', (e) => say(`Tab: ${e.detail.label}`));
   else el.addEventListener('change', () => say(`change: ${it.tag === 'irina-toggle' || it.tag === 'irina-checkbox' ? (el.checked ? 'on' : 'off') : el.value}`));

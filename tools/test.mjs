@@ -32,7 +32,7 @@ const type = async (text) => { for (const ch of text) { await send('Input.dispat
 let fails = 0;
 const check = (name, ok, got) => { if (!ok) fails++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}${got !== undefined ? `  ->  ${got}` : ''}`); };
 
-check('all eleven elements are defined', (await ev(`['button','toggle','slider','checkbox','radio','input','tabs','progress','rating','toast','tooltip'].every((n) => customElements.get('irina-' + n))`)));
+check('all sixteen elements are defined', (await ev(`['button','toggle','slider','checkbox','radio','input','tabs','progress','rating','toast','tooltip','select','dialog','accordion','counter','drawer'].every((n) => customElements.get('irina-' + n))`)));
 check('one shared core', (await ev('window.IrinaFX.version')) === 1);
 { await tap('irina-button[data-demo=primary] >>> .btn'); await sleep(1200); check('button: tap fires click and done() lands the check', +(await ev(`${find('irina-button[data-demo=primary] >>> .btn')}.style.getPropertyValue('--ok')`)) > 0.5); }
 { await tap('irina-toggle >>> .tog'); await sleep(500); check('toggle: tap turns it on', await ev(`document.querySelector('irina-toggle').checked`));
@@ -54,6 +54,14 @@ check('one shared core', (await ev('window.IrinaFX.version')) === 1);
   check('progress: set(0.5) eases to half', Math.abs((await ev(`+getComputedStyle(${find('irina-progress >>> .prog')}).getPropertyValue('--v')`)) - 0.5) < 0.02); }
 { await tap('[data-demo=save] >>> .btn'); await sleep(900); check('toast: it arrives', await ev(`document.querySelector('irina-toast').open`)); await sleep(3400); check('toast: it leaves', !(await ev(`document.querySelector('irina-toast').open`))); }
 { await tap('irina-tooltip >>> .help'); await sleep(600); check('tooltip: tap opens it', await ev(`document.querySelector('irina-tooltip').open`)); await key('Escape', 27); await sleep(300); check('tooltip: Escape closes it', !(await ev(`document.querySelector('irina-tooltip').open`))); }
+{ await tap('irina-select >>> .trig'); await sleep(400); check('select: tap opens menu', await ev(`document.querySelector('irina-select').open`));
+  await tap('irina-select >>> [data-value="kunai"]'); await sleep(400); check('select: tap picks option', (await ev(`document.querySelector('irina-select').value`)) === 'kunai'); }
+{ await tap('[data-demo=dialog] >>> .btn'); await sleep(500); check('dialog: tap opens it', await ev(`document.querySelector('irina-dialog').open`));
+  await key('Escape', 27); await sleep(400); check('dialog: Escape closes it', !(await ev(`document.querySelector('irina-dialog').open`))); }
+{ await tap('irina-accordion >>> .head'); await sleep(600); check('accordion: tap opens it', await ev(`document.querySelector('irina-accordion').open`)); }
+{ await tap('irina-counter >>> .btn'); await sleep(500); check('counter: tap increments & activates', (await ev(`document.querySelector('irina-counter').count`)) === 13 && (await ev(`document.querySelector('irina-counter').active`))); }
+{ await tap('[data-demo=drawer] >>> .btn'); await sleep(600); check('drawer: tap opens it', await ev(`document.querySelector('irina-drawer').open`));
+  await key('Escape', 27); await sleep(500); check('drawer: Escape closes it', !(await ev(`document.querySelector('irina-drawer').open`))); }
 { await ev(`(() => { const f = document.createElement('form'); f.id = 'tf'; f.innerHTML = '<irina-checkbox name="c" checked></irina-checkbox><irina-slider name="s" value="42"></irina-slider><irina-rating name="r" value="3"></irina-rating><irina-toggle name="t" checked></irina-toggle>'; document.body.append(f); })()`); await sleep(300);
   check('forms: values are sent with a form', (await ev(`new URLSearchParams(new FormData(document.getElementById('tf'))).toString()`)) === 'c=on&s=42&r=3&t=on', await ev(`new URLSearchParams(new FormData(document.getElementById('tf'))).toString()`)); }
 check('no horizontal scroll at 390', (await ev('document.documentElement.scrollWidth')) <= 390, await ev('document.documentElement.scrollWidth'));

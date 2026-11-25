@@ -14,7 +14,7 @@ class IrinaCheckbox extends fx.Base {
   static css = `
     label { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; -webkit-user-select: none; }
     input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
-    .box { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: var(--ir-bw) solid var(--ir-ink); border-radius: 9px; background: var(--ir-card); box-shadow: var(--ir-sh); will-change: transform; }
+    .box { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: var(--ir-bw) solid var(--ir-ink); border-radius: var(--ir-r); background: var(--ir-card); box-shadow: var(--ir-sh); will-change: transform; }
     svg { width: 26px; height: 26px; fill: none; stroke: var(--ir-tick); stroke-width: 4.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 30; transition: stroke-dashoffset .24s cubic-bezier(.2, .9, .3, 1) .08s; }
     input:checked + .box svg { stroke-dashoffset: 0; }
     input:focus-visible + .box { outline: 2.5px solid var(--ir-acc); outline-offset: 3px; }
@@ -66,8 +66,8 @@ class Spring {
 
 // ───────── the palette ─────────
 // P is for the effects; the CSS variables below are for the controls.
-const P = { fill: '#ffffff', shade: '#b8b3ff', line: '#5a4fd8', accent: '#ff5fa8', ink: '#1d1a4a', sfx: ['#1d1a4a', '#ffffff'] };
-const VARS = '--ir-card:#fff;--ir-ink:#1d1a4a;--ir-dim:#8580b0;--ir-soft:#b8b3ff;--ir-pri:#8f8df7;--ir-pri-ink:#1d1a4a;--ir-acc:#ff5fa8;--ir-track:#c9cbe0;--ir-r:15px;--ir-bw:3.2px;--ir-sh:6px 7px 0 var(--ir-soft);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-ink);--ir-fill:var(--ir-acc);--ir-on-pri:#fff;';
+const P = { fill: '#fffdf7', shade: '#d4d0c5', line: '#111111', accent: '#c91832', ink: '#111111', sfx: ['#111111', '#fffdf7'] };
+const VARS = '--ir-card:#fffdf7;--ir-ink:#111111;--ir-dim:#57534a;--ir-soft:#d4d0c5;--ir-pri:#111111;--ir-pri-ink:#fffdf7;--ir-acc:#c91832;--ir-track:#cdc8bc;--ir-r:2px;--ir-bw:3.2px;--ir-sh:5px 5px 0 var(--ir-ink);--ir-btn-sh:var(--ir-sh);--ir-btn-line:var(--ir-ink);--ir-alt-sh:var(--ir-sh);--ir-alt-line:var(--ir-ink);--ir-tick:var(--ir-acc);--ir-fill:var(--ir-acc);--ir-on-pri:#fffdf7;';
 // :where() keeps these at no specificity, so a page's own :root { --ir-acc: ... } wins.
 const pageCss = `:where(:root){${VARS}}
 canvas.irina-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}`;
@@ -76,6 +76,11 @@ document.head.append(Object.assign(document.createElement('style'), { textConten
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let respectMotion = false;
 let calm = false;
+let mangaTone = true;
+let stepped = true;
+let stepAcc = 0;
+let hasNewFx = false;
+const STEP_DT = 1 / 20;
 const syncCalm = () => { calm = respectMotion && reduce.matches; };
 reduce.addEventListener?.('change', syncCalm);
 
@@ -92,7 +97,7 @@ function ensureFront() {
 function size() { dpr = Math.min(2.5, devicePixelRatio || 1); if (front.c) { front.c.width = innerWidth * dpr; front.c.height = innerHeight * dpr; } }
 addEventListener('resize', size);
 function backLayer(canvas) { const L = { c: canvas, g: canvas.getContext('2d'), live: [], dirty: false }; layers.push(L); return L; }
-const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); start(); } return p; };
+const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); hasNewFx = true; start(); } return p; };
 // an effect with no end: it draws every frame until its handle is marked dead. layer puts it on a component's back layer.
 const persist = (draw, layer) => add(Infinity, draw, layer);
 function tick(dt) {
@@ -122,7 +127,12 @@ function advance(dt) {
   const due = timers.filter((q) => q.at <= now).sort((a, b) => a.at - b.at); if (due.length) for (const q of due) timers.splice(timers.indexOf(q), 1);
   for (const q of due) q.f();
   for (const f of frames) f(dt);
-  tick(dt);
+  stepAcc += dt;
+  if (!stepped || hasNewFx || stepAcc >= STEP_DT) {
+    hasNewFx = false;
+    tick(stepAcc);
+    stepAcc = 0;
+  }
 }
 function loop(ms) {
   if (!running) return;
@@ -134,18 +144,35 @@ function loop(ms) {
 function start() { if (running) return; running = true; last = performance.now(); requestAnimationFrame(loop); }
 
 // ───────── the effects ─────────
+// Screentone shading pattern cached per shade/ink pair for print-manga halftone shadows.
+const tones = new Map();
+function toneFill() {
+  if (!mangaTone) return P.shade;
+  const key = P.shade + P.ink;
+  let t = tones.get(key);
+  if (!t) {
+    t = document.createElement('canvas'); t.width = 10; t.height = 10;
+    const y = t.getContext('2d');
+    y.fillStyle = P.shade; y.fillRect(0, 0, 10, 10);
+    y.fillStyle = P.ink; y.globalAlpha = 0.24; y.beginPath();
+    for (const [px, py] of [[2.5, 2.5], [7.5, 7.5]]) { y.moveTo(px + 1.45, py); y.arc(px, py, 1.45, 0, TAU); }
+    y.fill();
+    tones.set(key, t);
+  }
+  return g.createPattern(t, 'repeat');
+}
 // circles drawn as one shape: outline, shadow tone, then the light side slid up and to the left
 function blob(cs, lw = 1.5, _, { lx = -1, arcs = false, deep = 1 } = {}) {
   const u = new Path2D(); for (const [x, y, r] of cs) if (r > 0.3) { u.moveTo(x + r, y); u.arc(x, y, r, 0, TAU); }
   g.save(); g.lineWidth = lw * 2; g.strokeStyle = P.line; g.stroke(u); g.restore();
-  g.save(); g.clip(u); g.fillStyle = P.shade; g.fillRect(-1e4, -1e4, 2e4, 2e4); const r = cs[0] ? cs[0][2] : 8;
+  g.save(); g.clip(u); g.fillStyle = toneFill(); g.fillRect(-1e4, -1e4, 2e4, 2e4); const r = cs[0] ? cs[0][2] : 8;
   g.save(); g.translate(lx * r * 0.2 * deep, -r * 0.26 * deep); g.fillStyle = P.fill; g.fill(u); g.restore();
   if (arcs) { g.strokeStyle = P.line; g.lineWidth = lw * 0.75; g.beginPath(); for (const [x, y, rr] of cs) if (rr > 3) { g.moveTo(x + Math.cos(-2.7) * rr, y + Math.sin(-2.7) * rr); g.arc(x, y, rr, -2.7, -0.5); } g.stroke(); }   // the cumulus lines inside the cloud
   g.restore();
 }
 function shape(path, lw = 1.5, off = 3, fill = P.fill) {
   g.save(); g.lineWidth = lw * 2; g.strokeStyle = P.line; g.stroke(path); g.restore();
-  g.save(); g.clip(path); g.fillStyle = P.shade; g.fillRect(-1e4, -1e4, 2e4, 2e4); g.translate(-off * 0.7, -off); g.fillStyle = fill; g.fill(path); g.restore();
+  g.save(); g.clip(path); g.fillStyle = toneFill(); g.fillRect(-1e4, -1e4, 2e4, 2e4); g.translate(-off * 0.7, -off); g.fillStyle = fill; g.fill(path); g.restore();
 }
 // a puff of smoke: lobes swell out with a little overshoot, roll, and shrink away
 function puff(x, y, { n = 5, size = 13, vx = 0, vy = -18, life = 0.8, spread = 1 } = {}) {
@@ -156,14 +183,14 @@ function puff(x, y, { n = 5, size = 13, vx = 0, vy = -18, life = 0.8, spread = 1
     blob(lobes.map((l) => [px + Math.cos(l.a + t * 0.9 * l.sp) * l.d * (0.5 + out(k) * 0.9), py + Math.sin(l.a + t * 0.9 * l.sp) * l.d * (0.5 + out(k) * 0.9) - out(k) * 5 * l.sp, l.r * grow * die * (1 + Math.sin(t * 9 + l.ph) * 0.05)]), 1.5, true, { lx: 0.5, arcs: size > 6.5, deep: 1.5 });
   });
 }
-// the impact: pink needles, a star in the shadow tone, and a white star on top; it leaves by its points thinning to nothing
+// the impact: accent needles, a star in the shadow tone, and a paper star on top; it leaves by its points thinning to nothing
 function burst(x, y, { r = 44, spikes = 13, life = 0.34, layer } = {}) {
   const j = Array.from({ length: spikes * 2 }, (_, i) => (i % 2 ? rnd(0.34, 0.5) : rnd(0.75, 1.15))), rot = rnd(TAU), pins = Array.from({ length: 8 }, (_, i) => ({ a: i / 8 * TAU + rnd(0.5), l: rnd(1.25, 1.75), w: rnd(0.03, 0.055) }));
   const star = (R, turn, inner = 1) => { const p = new Path2D(); j.forEach((m, i) => { const a = rot + turn + (i / j.length) * TAU, rr = R * (i % 2 ? m * inner : m); p[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * rr, y + Math.sin(a) * rr); }); p.closePath(); return p; };
   add(life, (k) => {
     const R = r * out(clamp(k / 0.3)), hollow = 1 + inn(clamp((k - 0.35) / 0.65)) * 1.3, r0 = R * 0.6 * Math.min(1.9, hollow);
     g.save(); g.fillStyle = P.accent; g.beginPath(); for (const n of pins) { const l = R * n.l; if (l <= r0) continue; g.moveTo(x + Math.cos(n.a - n.w) * r0, y + Math.sin(n.a - n.w) * r0); g.lineTo(x + Math.cos(n.a) * l, y + Math.sin(n.a) * l); g.lineTo(x + Math.cos(n.a + n.w) * r0, y + Math.sin(n.a + n.w) * r0); } g.fill(); g.restore();
-    const big = star(R * 1.16, 0.19, hollow); g.save(); g.fillStyle = P.shade; g.fill(big); g.strokeStyle = P.line; g.lineWidth = 1.2; g.stroke(big); g.restore();
+    const big = star(R * 1.16, 0.19, hollow); g.save(); g.fillStyle = toneFill(); g.fill(big); g.strokeStyle = P.line; g.lineWidth = 1.4; g.stroke(big); g.restore();
     shape(star(R * 0.84, 0, hollow), 1.4, 3);
   }, layer);
 }
@@ -188,7 +215,7 @@ function splash(x, y, { w = 34, h = 26, life = 0.7 } = {}) {
     const p = new Path2D(), tips = []; p.moveTo(x - w * 0.62, y);
     ts.forEach((s) => { const kk = clamp((k - s.d) / 0.8), up = Math.sin(kk * Math.PI) * s.h * (1 - kk * 0.25), bx = x + s.u * w, half = w / n * 0.62, tx = bx + (s.u * 1.6 + s.lean) * up * 0.5; tips.push([tx, y - up, up]); p.quadraticCurveTo(bx - half, y - up * 0.25, tx, y - up); p.quadraticCurveTo(bx + half * 0.5, y - up * 0.3, bx + half, y); });
     p.lineTo(x + w * 0.62, y); p.closePath();
-    g.save(); g.lineWidth = 2.8; g.strokeStyle = P.line; g.stroke(p); g.restore(); g.fillStyle = P.shade; g.fill(p);
+    g.save(); g.lineWidth = 2.8; g.strokeStyle = P.line; g.stroke(p); g.restore(); g.fillStyle = toneFill(); g.fill(p);
     g.save(); g.clip(p); g.fillStyle = P.fill; for (const [tx, ty, up] of tips) if (up > 4) { g.beginPath(); g.ellipse(tx, ty + up * 0.2, up * 0.2 + 1.4, up * 0.34, 0, 0, TAU); g.fill(); } g.restore();
   });
   for (let i = 0; i < 7; i++) { const a = -Math.PI / 2 + rnd(-1.1, 1.1), v = rnd(100, 210), r0 = rnd(2, 4);   // drops are teardrops, pointed the way they came from
@@ -220,7 +247,7 @@ function donut(x, y, { r = 20, vx = 30, vy = -50, life = 1, tilt = -0.25 } = {})
   const ph = rnd(TAU);
   add(life, (k, t) => { const s = back(clamp(t / 0.22)) * (1 - inn(clamp((k - 0.6) / 0.4))), px = x + vx * out(k) * life, py = y + vy * out(k) * life, hole = 0.42 + 0.22 * k, p = new Path2D(); if (s < 0.03) return;
     for (const [m, bump] of [[1, 0.09], [hole, 0.05]]) for (let i = 0; i <= 48; i++) { const a = i / 48 * TAU, rr = r * s * m * (1 + bump * Math.sin(a * 9 + ph + t * 2)), ex = Math.cos(a) * rr, ey = Math.sin(a) * rr * 0.52; p[i ? 'lineTo' : 'moveTo'](px + ex * Math.cos(tilt) - ey * Math.sin(tilt), py + ex * Math.sin(tilt) + ey * Math.cos(tilt)); }
-    g.save(); g.lineWidth = 3; g.strokeStyle = P.line; g.stroke(p); g.restore(); g.save(); g.clip(p, 'evenodd'); g.fillStyle = P.shade; g.fillRect(-1e4, -1e4, 2e4, 2e4); g.translate(r * 0.06, -r * 0.2); g.fillStyle = P.fill; g.fill(p, 'evenodd'); g.restore(); });
+    g.save(); g.lineWidth = 3; g.strokeStyle = P.line; g.stroke(p); g.restore(); g.save(); g.clip(p, 'evenodd'); g.fillStyle = toneFill(); g.fillRect(-1e4, -1e4, 2e4, 2e4); g.translate(r * 0.06, -r * 0.2); g.fillStyle = P.fill; g.fill(p, 'evenodd'); g.restore(); });
 }
 // wobble marks: the two little arcs beside something that has just stopped
 function wob(x, y, { dir = 1, r = 16, life = 0.45 } = {}) {
@@ -230,6 +257,35 @@ function wob(x, y, { dir = 1, r = 16, life = 0.45 } = {}) {
 function kira(x, y, { r = 9, life = 0.6, col } = {}) {
   add(life, (k, t) => { const s = r * Math.sin(k * Math.PI) ** 0.6, q = s * 0.16, p = new Path2D(); g.translate(x, y); g.rotate(Math.sin(t * 3) * 0.2); p.moveTo(0, -s); p.quadraticCurveTo(q, -q, s * 0.7, 0); p.quadraticCurveTo(q, q, 0, s); p.quadraticCurveTo(-q, q, -s * 0.7, 0); p.quadraticCurveTo(-q, -q, 0, -s);
     g.save(); g.fillStyle = col || P.fill; g.fill(p); g.restore(); g.strokeStyle = P.accent; g.lineWidth = 2; g.stroke(p); });
+}
+// Manga focus needles (shuchu-sen) converging toward the focal point on impact.
+function shuchu(x, y, { r = 135, inner = 48, n = 26, life = 0.28, layer, col } = {}) {
+  const rays = Array.from({ length: n }, (_, i) => ({ a: (i / n) * TAU + rnd(-0.08, 0.08), r0: inner * rnd(0.8, 1.35), r1: r * rnd(0.85, 1.25), w: rnd(0.015, 0.036) }));
+  add(life, (k) => {
+    const enter = out(clamp(k / 0.25)), exit = inn(clamp((k - 0.35) / 0.65));
+    g.save(); g.fillStyle = col || P.ink; g.beginPath();
+    for (const ray of rays) {
+      const tip = lerp(ray.r1, ray.r0, enter), tail = lerp(ray.r1, ray.r0, exit * 0.85);
+      if (tail - tip < 4) continue;
+      g.moveTo(x + Math.cos(ray.a) * tip, y + Math.sin(ray.a) * tip);
+      g.lineTo(x + Math.cos(ray.a - ray.w) * tail, y + Math.sin(ray.a - ray.w) * tail);
+      g.lineTo(x + Math.cos(ray.a + ray.w) * tail, y + Math.sin(ray.a + ray.w) * tail);
+      g.closePath();
+    }
+    g.fill(); g.restore();
+  }, layer);
+}
+// Crisp manga panel flash behind an element on heavy activation.
+function flash(x, y, { w = 130, h = 54, rot = -0.05, life = 0.16, layer } = {}) {
+  add(life, (k) => {
+    const sc = 1 + out(k) * 0.32, a = 1 - inn(k);
+    if (a < 0.05) return;
+    g.save(); g.translate(x, y); g.rotate(rot); g.scale(sc, sc); g.globalAlpha = a;
+    g.fillStyle = P.ink; g.fillRect(-w / 2 + 6, -h / 2 + 6, w, h);
+    g.fillStyle = P.fill; g.strokeStyle = P.ink; g.lineWidth = 3;
+    g.fillRect(-w / 2, -h / 2, w, h); g.strokeRect(-w / 2, -h / 2, w, h);
+    g.restore();
+  }, layer);
 }
 
 // ───────── the lettering ─────────
@@ -241,21 +297,40 @@ const shapes = {}, baked = new Map();
 const word = (name) => shapes[name] || (WORDS[name] && (shapes[name] = { w: WORDS[name][0], h: WORDS[name][1], p: new Path2D(WORDS[name][2]) }));
 // The outline and fill are painted once per word and colour, so a word on screen costs one drawImage a frame.
 function bake(name, fc, oc, dots) {
-  const key = name + fc + oc + dots; let c = baked.get(key); if (c) return c;
-  const s = word(name), pad = 24, e = s.w * 0.035;
-  c = document.createElement('canvas'); c.width = s.w + pad * 2; c.height = s.h + pad * 2;
-  const x = c.getContext('2d'); x.translate(pad, pad); x.lineJoin = 'round';
-  x.strokeStyle = x.fillStyle = oc; x.lineWidth = e * 2; x.stroke(s.p); x.fill(s.p);
-  if (dots) {   // screentone letters: dots in the outline colour on white
-    const t = document.createElement('canvas'); t.width = 22; t.height = 44; const y = t.getContext('2d'); y.fillStyle = '#fff'; y.fillRect(0, 0, 22, 44); y.fillStyle = oc; y.beginPath();
-    for (const [px, py] of [[0, 0], [22, 0], [0, 44], [22, 44], [11, 22]]) { y.moveTo(px + 5.2, py); y.arc(px, py, 5.2, 0, TAU); } y.fill(); x.fillStyle = x.createPattern(t, 'repeat');
-  } else x.fillStyle = fc;
-  x.fill(s.p); baked.set(key, c); return c;
+  const key = `${name}|${fc}|${oc}|${dots ? P.fill : ''}|${mangaTone}`; let c = baked.get(key); if (c) return c;
+  const s = word(name), pad = 28;
+  c = document.createElement('canvas');
+  if (s) {
+    const e = s.w * 0.035;
+    c.width = s.w + pad * 2; c.height = s.h + pad * 2;
+    const x = c.getContext('2d'); x.translate(pad, pad); x.lineJoin = 'round';
+    if (mangaTone) {
+      x.save(); x.translate(10, 12); x.strokeStyle = x.fillStyle = oc; x.lineWidth = e * 2; x.stroke(s.p); x.fill(s.p); x.restore();
+    }
+    x.strokeStyle = x.fillStyle = oc; x.lineWidth = e * 2; x.stroke(s.p); x.fill(s.p);
+    if (dots) {
+      const t = document.createElement('canvas'); t.width = 22; t.height = 44; const y = t.getContext('2d'); y.fillStyle = P.fill; y.fillRect(0, 0, 22, 44); y.fillStyle = oc; y.beginPath();
+      for (const [px, py] of [[0, 0], [22, 0], [0, 44], [22, 44], [11, 22]]) { y.moveTo(px + 5.2, py); y.arc(px, py, 5.2, 0, TAU); } y.fill(); x.fillStyle = x.createPattern(t, 'repeat');
+    } else x.fillStyle = fc;
+    x.fill(s.p);
+  } else {
+    const x0 = document.createElement('canvas').getContext('2d');
+    const font = 'italic 900 132px/1 "Impact", "Arial Black", system-ui, sans-serif';
+    x0.font = font;
+    const w = Math.max(120, Math.ceil(x0.measureText(name).width) + 40), h = 160;
+    c.width = w + pad * 2; c.height = h + pad * 2;
+    const x = c.getContext('2d'); x.font = font; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+    const cx = c.width / 2, cy = c.height / 2;
+    if (mangaTone) { x.fillStyle = oc; x.strokeStyle = oc; x.lineWidth = 22; x.strokeText(name, cx + 8, cy + 10); x.fillText(name, cx + 8, cy + 10); }
+    x.strokeStyle = oc; x.lineWidth = 22; x.strokeText(name, cx, cy);
+    x.fillStyle = fc; x.fillText(name, cx, cy);
+  }
+  baked.set(key, c); return c;
 }
 // A word lands a size too big and wobbles while it stays. col: fill colour. edge: outline colour. dots: screentone letters.
 function sfx(name, x, y, { size = 64, rot = -0.14, life = 0.95, col, edge, dots } = {}) {
-  if (!word(name)) return; const s = new Spring(0.2, 520, 17); s.to = 1; let lastT = 0;
-  const c = bake(name, col || P.sfx[0], edge || P.sfx[1], !!dots), k0 = size / WORDS[name][0];
+  if (!name) return; const s = new Spring(0.2, 520, 17); s.to = 1; let lastT = 0;
+  const c = bake(name, col || P.sfx[0], edge || P.sfx[1], !!dots), baseW = WORDS[name] ? WORDS[name][0] : Math.max(120, c.width - 56), k0 = size / baseW;
   add(life, (k, t) => {
     const sc = s.step(t - lastT) * (1 - inn(clamp((k - 0.86) / 0.14))) * k0; lastT = t;
     g.translate(x + Math.sin(t * 31) * 0.8, y + Math.cos(t * 27) * 0.8); g.rotate(rot + Math.sin(t * 6) * 0.03);
@@ -304,9 +379,13 @@ const api = window.IrinaVFX = {
   get respectReducedMotion() { return respectMotion; },
   set respectReducedMotion(v) { respectMotion = !!v; syncCalm(); },
   get prefersReducedMotion() { return reduce.matches; },
+  get mangaTone() { return mangaTone; },
+  set mangaTone(v) { mangaTone = !!v; },
+  get stepped() { return stepped; },
+  set stepped(v) { stepped = !!v; if (!stepped) stepAcc = 0; },
   TAU, clamp, lerp, rnd, Spring,
   advance, later, persist, backLayer, blob, shape, get g() { return g; },
-  puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, sfx, hollow, dotted,
+  puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, shuchu, flash, sfx, hollow, dotted,
   at, esc, squashy, Base, define,
 };
 })();

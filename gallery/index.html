@@ -3,92 +3,291 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IrinaVFX</title>
+<title>IrinaVFX | Manga Edition</title>
 <style>
-  :root { --page: #ffffff; --text: #1d1a4a; --mute: #8580b0; --line: #dcdaf0; --chip: #f4f3fc; }
+  :root {
+    --page: #f7f3e8;
+    --panel: #fffdf7;
+    --text: #111111;
+    --mute: #57534a;
+    --line: #111111;
+    --chip: #ede7d6;
+    --acc: #c91832;
+    --on-acc: #fffdf7;
+    --sh: 5px 5px 0 var(--line);
+    --r: 2px;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; overflow-x: clip; background: var(--page); }
-  body { margin: 0; color: var(--text); background: var(--page); font: 500 15px/1.45 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; transition: background .2s, color .2s; }
+  body {
+    margin: 0;
+    color: var(--text);
+    background: var(--page);
+    font: 500 15px/1.45 "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
   a { color: inherit; }
   button { font: inherit; color: inherit; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 16px 80px; }
-  header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 14px; }
-  h1 { margin: 0; font: italic 800 28px/1.1 "Avenir Next", "Nunito", -apple-system, "Segoe UI", system-ui, sans-serif; letter-spacing: -.01em; }
-  .lede { max-width: 640px; margin: 8px 0 0; color: var(--mute); }
-  .links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 13px; border: 1.5px solid var(--line); border-radius: 999px; background: none; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
-  .pill:hover { border-color: var(--text); }
-  .pill[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--page); }
-  .motion-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
-  .motion-status { color: var(--mute); font-size: 12.5px; }
-  .theme-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 0; }
-  .theme-label { color: var(--mute); font-size: 12.5px; font-weight: 600; margin-right: 2px; }
-  .pill .dot { width: 10px; height: 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.18); flex: none; }
-  .customizer { margin-top: 14px; padding: 16px; border: 1.5px solid var(--line); border-radius: 16px; background: var(--chip); display: grid; gap: 14px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  .masthead {
+    position: relative;
+    padding: 24px 24px 20px;
+    border: 3px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    box-shadow: var(--sh);
+    overflow: hidden;
+  }
+  .masthead::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 140px;
+    height: 100%;
+    background-image: radial-gradient(var(--line) 1.25px, transparent 1.25px);
+    background-size: 7px 7px;
+    opacity: .12;
+    pointer-events: none;
+    mask-image: linear-gradient(to left, #000, transparent);
+    -webkit-mask-image: linear-gradient(to left, #000, transparent);
+  }
+  .mast-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px 24px;
+  }
+  .title-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; }
+  h1 {
+    margin: 0;
+    font: italic 900 clamp(30px, 5vw, 42px)/1 "Arial Black", "Impact", "Inter", system-ui, sans-serif;
+    letter-spacing: -.02em;
+    text-transform: uppercase;
+  }
+  .edition-mark {
+    display: inline-block;
+    padding: 3px 9px;
+    border: 2px solid var(--line);
+    background: var(--acc);
+    color: var(--on-acc);
+    font: 900 12px/1.2 "Arial Black", "Inter", system-ui, sans-serif;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transform: skewX(-10deg);
+  }
+  .lede { position: relative; z-index: 1; max-width: 680px; margin: 10px 0 0; color: var(--mute); }
+
+  .controls {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 2px solid var(--line);
+  }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .bar-label {
+    min-width: 78px;
+    color: var(--mute);
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 2px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .1s;
+  }
+  .pill:hover { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 var(--line); }
+  .pill:active { transform: translate(1px, 1px); box-shadow: none; }
+  .pill[aria-pressed="true"] {
+    background: var(--line);
+    border-color: var(--line);
+    color: var(--panel);
+  }
+  .pill .dot {
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r);
+    flex: none;
+  }
+  .pill[aria-pressed="true"] .dot { border-color: var(--panel); }
+  .motion-status { color: var(--mute); font-size: 12.5px; margin-left: 2px; }
+
+  .customizer {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+    padding: 16px;
+    border: 2px solid var(--line);
+    border-radius: var(--r);
+    background: var(--chip);
+    display: grid;
+    gap: 14px;
+  }
   .customizer[hidden] { display: none; }
-  .customizer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-  .swatch { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--page); cursor: pointer; }
-  .swatch:hover { border-color: var(--text); }
-  .swatch input[type="color"] { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 8px; background: none; cursor: pointer; flex: none; }
+  .customizer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(156px, 1fr)); gap: 10px; }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 2px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    cursor: pointer;
+  }
+  .swatch:hover { box-shadow: 2px 2px 0 var(--line); }
+  .swatch input[type="color"] { width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--r); background: none; cursor: pointer; flex: none; }
   .swatch input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-  .swatch input[type="color"]::-webkit-color-swatch { border: 1.5px solid rgba(0,0,0,.15); border-radius: 7px; }
+  .swatch input[type="color"]::-webkit-color-swatch { border: 1.5px solid var(--line); border-radius: var(--r); }
   .swatch-info { min-width: 0; display: grid; line-height: 1.25; }
-  .swatch-name { font-size: 12.5px; font-weight: 700; }
+  .swatch-name { font-size: 12.5px; font-weight: 800; }
   .swatch-hex { font-size: 11.5px; color: var(--mute); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .customizer-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
-  .customizer-note { margin: 0; color: var(--mute); font-size: 12px; }
+  .customizer-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; }
+  .customizer-note { margin: 0; color: var(--mute); font-size: 12.5px; }
   .customizer-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .copy-msg { font-size: 12.5px; color: var(--mute); }
-  :focus-visible { outline: 2.5px solid #ff5fa8; outline-offset: 3px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 28px; grid-auto-flow: dense; }
-  .card { display: flex; flex-direction: column; min-width: 0; border: 1.5px solid var(--line); border-radius: 18px; }
+  .copy-msg { font-size: 12.5px; font-weight: 700; color: var(--text); }
+
+  :focus-visible { outline: 3px solid var(--acc); outline-offset: 2px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 26px;
+    grid-auto-flow: dense;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 3px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    box-shadow: var(--sh);
+  }
   .card.wide { grid-column: span 2; }
-  .card h2 { margin: 0; padding: 14px 16px 0; font-size: 15px; font-weight: 700; }
-  .card h2 span { margin-left: 6px; color: var(--mute); font-weight: 500; }
-  .card .how { margin: 2px 0 0; padding: 0 16px; color: var(--mute); font-size: 13px; }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 16px 10px;
+    border-bottom: 2px solid var(--line);
+    background: var(--chip);
+  }
+  .card h2 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
+  .card h2 span { margin-left: 6px; color: var(--mute); font-weight: 600; font-size: 13px; }
+  .koma-no {
+    flex: none;
+    padding: 2px 7px;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    font: 900 11px/1.2 "Arial Black", "Inter", system-ui, sans-serif;
+    letter-spacing: .04em;
+  }
+  .card .how { margin: 12px 0 0; padding: 0 16px; color: var(--mute); font-size: 13.5px; }
   .stage { flex: 1; display: grid; place-items: center; min-height: 230px; padding: 24px 16px; }
   .stage.row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px; }
-  .said { min-height: 1.45em; margin: 0; padding: 0 16px; color: var(--mute); font-size: 13px; text-align: center; }
-  .acts { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px 14px; border-top: 1.5px solid var(--line); margin-top: 10px; }
-  .acts .pill { height: 30px; font-size: 12.5px; }
-  .note { margin: 40px 0 0; color: var(--mute); font-size: 13px; }
-  .note code { padding: 1px 5px; border-radius: 5px; background: var(--chip); font-size: 12.5px; }
+  .said { min-height: 1.45em; margin: 0; padding: 0 16px; color: var(--mute); font-size: 13px; font-weight: 600; text-align: center; }
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px 14px;
+    border-top: 2px solid var(--line);
+    margin-top: 10px;
+  }
+  .acts .pill { min-height: 44px; padding: 0 12px; font-size: 12.5px; }
+  .note {
+    margin: 36px 0 0;
+    padding: 14px 16px;
+    border: 2px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    color: var(--mute);
+    font-size: 13px;
+  }
+  .note code { padding: 1px 5px; border: 1px solid var(--line); border-radius: var(--r); background: var(--chip); color: var(--text); font-size: 12.5px; }
   .toastwrap { position: relative; display: grid; justify-items: center; gap: 22px; }
-  @media (max-width: 680px) { .card.wide { grid-column: auto; } }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 16px 12px 64px; }
+    .masthead { padding: 18px 16px 16px; }
+    .card.wide { grid-column: auto; }
+    .bar-label { min-width: 100%; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <h1>IrinaVFX</h1>
-      <p class="lede">Seventeen ordinary controls that react like anime: squash and overshoot on springs, and drawn effects (smoke, impact bursts, splashes, slashes) with manga sound-effect lettering. Each one is a single file with no dependencies.</p>
-      <p class="links">
-        <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">The repo on GitHub <span aria-hidden="true">&#8599;</span></a>
-      </p>
-      <div class="motion-bar">
+  <header class="masthead">
+    <div class="mast-top">
+      <div>
+        <div class="title-row">
+          <h1>IrinaVFX</h1>
+          <span class="edition-mark">Manga Edition</span>
+        </div>
+        <p class="lede">Sixteen ink-framed web controls driven by spring physics, screentone clouds, manga concentration lines, and comic sound-effect lettering on a single page-wide canvas.</p>
+      </div>
+      <a class="pill" href="https://github.com/dayy4dev/irina-fx" target="_blank" rel="noopener">GitHub Repo <span aria-hidden="true">&#8599;</span></a>
+    </div>
+
+    <div class="controls">
+      <div class="bar" id="themeBar">
+        <span class="bar-label">Theme</span>
+        <button class="pill" type="button" id="customizerToggle" aria-expanded="false" aria-pressed="false">Customize Colors</button>
+      </div>
+
+      <div class="bar">
+        <span class="bar-label">VFX Style</span>
+        <button class="pill" type="button" id="toneToggle" aria-pressed="true"></button>
+        <button class="pill" type="button" id="stepToggle" aria-pressed="true"></button>
         <button class="pill" type="button" id="motionToggle" aria-pressed="false"></button>
         <span class="motion-status" id="motionStatus"></span>
       </div>
-      <div class="theme-bar" id="themeBar">
-        <span class="theme-label">Theme:</span>
-        <button class="pill" type="button" id="customizerToggle" aria-expanded="false">Customize Colors</button>
-      </div>
-      <section class="customizer" id="customizer" hidden aria-label="Theme color customizer">
-        <div class="customizer-grid" id="swatchGrid"></div>
-        <div class="customizer-foot">
-          <p class="customizer-note">Updates both CSS <code>--ir-*</code> variables and Canvas <code>IrinaVFX.P</code> live. (<code>&lt;irina-toggle&gt;</code> uses a pre-painted sprite sheet.)</p>
-          <div class="customizer-acts">
-            <span class="copy-msg" id="themeMsg" aria-live="polite"></span>
-            <button class="pill" type="button" id="themeReset">Reset</button>
-            <button class="pill" type="button" id="themeCopy">Copy CSS &amp; JS</button>
-          </div>
-        </div>
-      </section>
     </div>
+
+    <section class="customizer" id="customizer" hidden aria-label="Theme color customizer">
+      <div class="customizer-grid" id="swatchGrid"></div>
+      <div class="customizer-foot">
+        <p class="customizer-note">Updates CSS <code>--ir-*</code> variables and Canvas <code>IrinaVFX.P</code> live. (<code>&lt;irina-toggle&gt;</code> uses a pre-painted sprite sheet.)</p>
+        <div class="customizer-acts">
+          <span class="copy-msg" id="themeMsg" aria-live="polite"></span>
+          <button class="pill" type="button" id="shapeToggle" aria-pressed="true">Shape: Sharp Manga</button>
+          <button class="pill" type="button" id="themeReset">Reset</button>
+          <button class="pill" type="button" id="themeCopy">Copy CSS &amp; JS</button>
+        </div>
+      </div>
+    </section>
   </header>
+
   <main class="grid" id="grid"></main>
-  <p class="note">Effects are drawn on one canvas over the page. By default, animations stay active even if Windows disables animations (<code>prefers-reduced-motion</code>); use the toggle above to follow the OS setting. Every colour is a <code>--ir-*</code> variable you can override.</p>
+
+  <p class="note">Effects draw on a fixed overlay canvas (plus per-component back layers for bursts and concentration lines). By default, animations stay active even if Windows disables animations (<code>prefers-reduced-motion</code>); toggle <strong>Reduced Motion</strong> above to follow the OS setting. Override any <code>--ir-*</code> variable to restyle controls.</p>
 </div>
 <script src="../button/button.js"></script>
 <script src="../toggle/toggle.js"></script>
@@ -107,29 +306,27 @@
 <script src="../counter/counter.js"></script>
 <script src="../drawer/drawer.js"></script>
 <script>
-// The gallery: every control live on one page, with its install line and a prompt that hands a coding agent the real file.
 const REPO = 'dayy4dev/irina-fx';
 const ITEMS = [
-  { id: 'button', name: 'Primary button', tag: 'irina-button', how: 'Click it.', html: '<irina-button data-demo="primary">Confirm</irina-button>' },
-  { id: 'button', name: 'Secondary button', tag: 'irina-button', how: 'Click it.', html: '<irina-button variant="secondary">Cancel</irina-button>' },
+  { id: 'button', name: 'Primary button', tag: 'irina-button', how: 'Click it for a full ink impact frame.', html: '<irina-button data-demo="primary">Confirm</irina-button>' },
+  { id: 'button', name: 'Secondary button', tag: 'irina-button', how: 'Click it for a light corner snap.', html: '<irina-button variant="secondary">Cancel</irina-button>' },
   { id: 'toggle', name: 'Toggle', tag: 'irina-toggle', how: 'Flip it, then flip it back.', html: '<irina-toggle label="Notifications"></irina-toggle>' },
-  { id: 'slider', name: 'Slider', tag: 'irina-slider', how: 'Drag it fast, and let go while it is moving.', html: '<irina-slider value="30" label="Volume"></irina-slider>' },
+  { id: 'slider', name: 'Slider', tag: 'irina-slider', how: 'Drag it fast and let go while moving.', html: '<irina-slider value="30" label="Volume"></irina-slider>' },
   { id: 'checkbox', name: 'Checkbox', tag: 'irina-checkbox', how: 'Tick it.', html: '<irina-checkbox>Remember me</irina-checkbox>' },
   { id: 'radio', name: 'Radio', tag: 'irina-radio', how: 'Pick the other one.', html: '<irina-radio label="Plan"><option value="a" selected>Option A</option><option value="b">Option B</option></irina-radio>' },
   { id: 'input', name: 'Text input', tag: 'irina-input', how: 'Click it and type.', html: '<irina-input label="Text" placeholder="Type something"></irina-input>' },
   { id: 'tabs', name: 'Tabs', tag: 'irina-tabs', how: 'Pick another tab, or use the arrow keys.', html: '<irina-tabs label="Sections"><option>Home</option><option>Profile</option><option>Settings</option></irina-tabs>' },
-  { id: 'progress', name: 'Progress', tag: 'irina-progress', how: 'It plays a load by itself, in surges. Click it to start again.', html: '<irina-progress demo label="Loading"></irina-progress>', wide: true },
-  { id: 'rating', name: 'Rating', tag: 'irina-rating', how: 'Give it five.', html: '<irina-rating label="Rating"></irina-rating>' },
+  { id: 'progress', name: 'Progress', tag: 'irina-progress', how: 'Loads in surges by itself. Click it to restart.', html: '<irina-progress demo label="Loading"></irina-progress>', wide: true },
+  { id: 'rating', name: 'Rating', tag: 'irina-rating', how: 'Give it five stars.', html: '<irina-rating label="Rating"></irina-rating>' },
   { id: 'toast', name: 'Toast', tag: 'irina-toast', how: 'Press Save.', html: '<div class="toastwrap"><irina-button variant="secondary" data-demo="save">Save</irina-button><irina-toast></irina-toast></div>' },
-  { id: 'tooltip', name: 'Tooltip', tag: 'irina-tooltip', how: 'Hover, focus or tap the button.', html: '<irina-tooltip text="Helpful hint!"></irina-tooltip>' },
+  { id: 'tooltip', name: 'Tooltip', tag: 'irina-tooltip', how: 'Hover, focus, or tap the button.', html: '<irina-tooltip text="Helpful hint!"></irina-tooltip>' },
   { id: 'select', name: 'Select', tag: 'irina-select', how: 'Click to open and pick an option.', html: '<irina-select label="Weapon"><option value="katana">Katana</option><option value="kunai">Kunai</option><option value="shuriken">Shuriken</option></irina-select>' },
   { id: 'dialog', name: 'Dialog', tag: 'irina-dialog', how: 'Open the modal dialog.', html: '<div><irina-button variant="secondary" data-demo="dialog">Open Dialog</irina-button><irina-dialog heading="Special Attack"><p style="margin:0">Ready to trigger the final finisher?</p><irina-button slot="actions" data-demo="dialog-ok">Confirm</irina-button></irina-dialog></div>' },
-  { id: 'accordion', name: 'Accordion', tag: 'irina-accordion', how: 'Click the header to expand or collapse.', html: '<irina-accordion heading="Special Notes">Every effect is drawn in code on one fixed canvas over the page, with zero external dependencies.</irina-accordion>' },
+  { id: 'accordion', name: 'Accordion', tag: 'irina-accordion', how: 'Click the header to expand or collapse.', html: '<irina-accordion heading="Special Notes">Every effect is drawn in code on a fixed canvas overlay, with zero external dependencies.</irina-accordion>' },
   { id: 'counter', name: 'Counter', tag: 'irina-counter', how: 'Click to like and pop the counter.', html: '<irina-counter count="12" label="Like"></irina-counter>' },
-  { id: 'drawer', name: 'Drawer', tag: 'irina-drawer', how: 'Open the slide-over drawer.', html: '<div><irina-button variant="secondary" data-demo="drawer">Open Drawer</irina-button><irina-drawer heading="Navigation"><p style="margin-top:0">Slide-over sheet content. Press Escape, click outside, or press ✕ to close.</p></irina-drawer></div>' },
+  { id: 'drawer', name: 'Drawer', tag: 'irina-drawer', how: 'Open the slide-over drawer.', html: '<div><irina-button variant="secondary" data-demo="drawer">Open Drawer</irina-button><irina-drawer heading="Navigation"><p style="margin-top:0">Slide-over sheet content. Press Escape, click outside, or press close.</p></irina-drawer></div>' },
 ];
 
-// What each prompt says about wiring its component in. The rest of the prompt is the same for all of them.
 const WIRE = {
   button: ['Use <irina-button>Confirm</irina-button> where my main button is, and <irina-button variant="secondary">Cancel</irina-button> for a quieter one. The text inside is the label.',
     'Listen for click on the element as usual. For a submit button inside a form, add type="submit". The disabled attribute works like a button\'s.',
@@ -187,63 +384,159 @@ const prompt = (it) => [
 
 const motionBtn = document.getElementById('motionToggle');
 const motionStatus = document.getElementById('motionStatus');
+const toneBtn = document.getElementById('toneToggle');
+const stepBtn = document.getElementById('stepToggle');
 const MOTION_KEY = 'irina-fx:respect-motion';
+const TONE_KEY = 'irina-fx:manga-tone';
+const STEP_KEY = 'irina-fx:stepped';
 const osReduce = matchMedia('(prefers-reduced-motion: reduce)');
-function syncMotionUI() {
+
+function syncEngineUI() {
   const respect = !!window.IrinaVFX?.respectReducedMotion;
   motionBtn.setAttribute('aria-pressed', String(respect));
-  motionBtn.textContent = respect
-    ? 'Reduced Motion: Follow Windows'
-    : 'Reduced Motion: Ignored (Always Animate)';
+  motionBtn.textContent = respect ? 'Reduced Motion: Follow OS' : 'Reduced Motion: Ignored';
   motionStatus.textContent = osReduce.matches
-    ? (respect ? 'OS prefers-reduced-motion is ON (effects paused)' : 'OS prefers-reduced-motion is ON (ignored)')
-    : 'OS prefers-reduced-motion is OFF';
+    ? (respect ? 'OS reduced-motion is ON (paused)' : 'OS reduced-motion is ON (ignored)')
+    : 'OS reduced-motion is OFF';
+
+  const tone = !!window.IrinaVFX?.mangaTone;
+  toneBtn.setAttribute('aria-pressed', String(tone));
+  toneBtn.textContent = tone ? 'VFX Shading: Screentone' : 'VFX Shading: Flat';
+
+  const stepped = !!window.IrinaVFX?.stepped;
+  stepBtn.setAttribute('aria-pressed', String(stepped));
+  stepBtn.textContent = stepped ? 'Cadence: Cel 20fps' : 'Cadence: Smooth 60fps';
 }
+
 try {
-  if (localStorage.getItem(MOTION_KEY) === '1' && window.IrinaVFX) window.IrinaVFX.respectReducedMotion = true;
+  if (window.IrinaVFX) {
+    if (localStorage.getItem(MOTION_KEY) === '1') window.IrinaVFX.respectReducedMotion = true;
+    if (localStorage.getItem(TONE_KEY) === '0') window.IrinaVFX.mangaTone = false;
+    if (localStorage.getItem(STEP_KEY) === '0') window.IrinaVFX.stepped = false;
+  }
 } catch {}
+
 motionBtn.addEventListener('click', () => {
   if (!window.IrinaVFX) return;
   const next = !window.IrinaVFX.respectReducedMotion;
   window.IrinaVFX.respectReducedMotion = next;
   try { localStorage.setItem(MOTION_KEY, next ? '1' : '0'); } catch {}
-  syncMotionUI();
+  syncEngineUI();
 });
-osReduce.addEventListener?.('change', syncMotionUI);
-syncMotionUI();
+toneBtn.addEventListener('click', () => {
+  if (!window.IrinaVFX) return;
+  const next = !window.IrinaVFX.mangaTone;
+  window.IrinaVFX.mangaTone = next;
+  try { localStorage.setItem(TONE_KEY, next ? '1' : '0'); } catch {}
+  syncEngineUI();
+});
+stepBtn.addEventListener('click', () => {
+  if (!window.IrinaVFX) return;
+  const next = !window.IrinaVFX.stepped;
+  window.IrinaVFX.stepped = next;
+  try { localStorage.setItem(STEP_KEY, next ? '1' : '0'); } catch {}
+  syncEngineUI();
+});
+osReduce.addEventListener?.('change', syncEngineUI);
+syncEngineUI();
 
-const THEME_KEY = 'irina-fx:theme';
-const DEFAULT_THEME = { acc: '#ff5fa8', pri: '#8f8df7', ink: '#1d1a4a', line: '#5a4fd8', soft: '#b8b3ff', card: '#ffffff' };
+const THEME_KEY = 'irina-fx:manga-theme';
+const DEFAULT_THEME = {
+  acc: '#c91832', pri: '#111111', onPri: '#fffdf7', ink: '#111111',
+  line: '#111111', soft: '#d4d0c5', card: '#fffdf7',
+  page: '#f7f3e8', chip: '#ede7d6', mute: '#57534a',
+  sharp: true,
+};
 const PRESETS = [
-  { id: 'default', name: 'Default', colors: DEFAULT_THEME },
-  { id: 'cyber', name: 'Cyber Cyan', colors: { acc: '#00e5ff', pri: '#5b7cfa', ink: '#12183a', line: '#3b5bdb', soft: '#a5d8ff', card: '#ffffff' } },
-  { id: 'crimson', name: 'Crimson', colors: { acc: '#ff3b5c', pri: '#ff758f', ink: '#2b0d16', line: '#c9184a', soft: '#ffb3c1', card: '#ffffff' } },
-  { id: 'matcha', name: 'Matcha', colors: { acc: '#ff7b54', pri: '#52b788', ink: '#1b3a2b', line: '#2d6a4f', soft: '#b7e4c7', card: '#ffffff' } },
+  { id: 'manga', name: 'Manga Ink', colors: DEFAULT_THEME },
+  {
+    id: 'noir', name: 'Dark Manga',
+    colors: {
+      acc: '#ff4d63', pri: '#f5f2eb', onPri: '#141416', ink: '#f5f2eb',
+      line: '#f5f2eb', soft: '#3a3a42', card: '#141416',
+      page: '#0c0c0e', chip: '#1f1f24', mute: '#a8a399',
+      sharp: true,
+    },
+  },
+  {
+    id: 'cyber', name: 'Cyber Tone',
+    colors: {
+      acc: '#006994', pri: '#0f172a', onPri: '#f8fafc', ink: '#0f172a',
+      line: '#0f172a', soft: '#cbd5e1', card: '#f8fafc',
+      page: '#eef2f6', chip: '#e2e8f0', mute: '#4b5563',
+      sharp: true,
+    },
+  },
+  {
+    id: 'sakuga', name: 'Sakuga Classic',
+    colors: {
+      acc: '#ff5fa8', pri: '#8f8df7', onPri: '#1d1a4a', ink: '#1d1a4a',
+      line: '#5a4fd8', soft: '#b8b3ff', card: '#ffffff',
+      page: '#ffffff', chip: '#f4f3fc', mute: '#585380',
+      sharp: false,
+    },
+  },
 ];
 const SWATCHES = [
   { key: 'acc', label: 'Accent' },
   { key: 'pri', label: 'Primary' },
   { key: 'ink', label: 'Ink' },
   { key: 'line', label: 'VFX Line' },
-  { key: 'soft', label: 'Shadow / Shade' },
-  { key: 'card', label: 'Card / Fill' },
+  { key: 'soft', label: 'Tone / Shade' },
+  { key: 'card', label: 'Paper / Card' },
 ];
 let currentTheme = { ...DEFAULT_THEME };
 const themeBar = document.getElementById('themeBar');
 const customizerToggle = document.getElementById('customizerToggle');
 const customizer = document.getElementById('customizer');
 const swatchGrid = document.getElementById('swatchGrid');
+const shapeToggle = document.getElementById('shapeToggle');
 const themeMsg = document.getElementById('themeMsg');
+
+function contrastInk(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+  if (!m) return '#fffdf7';
+  const c = [0, 2, 4].map((i) => {
+    const v = parseInt(m[1].slice(i, i + 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  });
+  return (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) > 0.179 ? '#111111' : '#fffdf7';
+}
 
 function applyTheme(t, save = true) {
   currentTheme = { ...DEFAULT_THEME, ...t };
   const r = document.documentElement.style;
+  const sharp = currentTheme.sharp !== false;
+  const rad = sharp ? '2px' : '15px';
+  const shCol = sharp ? currentTheme.ink : currentTheme.soft;
+  const shVal = sharp ? `5px 5px 0 ${shCol}` : `6px 7px 0 ${shCol}`;
+
+  r.setProperty('--page', currentTheme.page || '#f7f3e8');
+  r.setProperty('--panel', currentTheme.card);
+  r.setProperty('--text', currentTheme.ink);
+  r.setProperty('--mute', currentTheme.mute || '#57534a');
+  r.setProperty('--line', currentTheme.ink);
+  r.setProperty('--chip', currentTheme.chip || '#ede7d6');
+  r.setProperty('--acc', currentTheme.acc);
+  r.setProperty('--on-acc', contrastInk(currentTheme.acc));
+  r.setProperty('--r', rad);
+  r.setProperty('--sh', shVal);
+
   r.setProperty('--ir-acc', currentTheme.acc);
   r.setProperty('--ir-pri', currentTheme.pri);
+  r.setProperty('--ir-on-pri', currentTheme.onPri || '#fffdf7');
+  r.setProperty('--ir-pri-ink', currentTheme.onPri || '#fffdf7');
   r.setProperty('--ir-ink', currentTheme.ink);
-  r.setProperty('--ir-pri-ink', currentTheme.ink);
+  r.setProperty('--ir-dim', currentTheme.mute || '#57534a');
   r.setProperty('--ir-soft', currentTheme.soft);
   r.setProperty('--ir-card', currentTheme.card);
+  r.setProperty('--ir-r', rad);
+  r.setProperty('--ir-sh', shVal);
+  r.setProperty('--ir-btn-sh', shVal);
+  r.setProperty('--ir-alt-sh', shVal);
+  r.setProperty('--ir-tick', sharp ? currentTheme.acc : currentTheme.ink);
+  r.setProperty('--ir-fill', currentTheme.acc);
+
   if (window.IrinaVFX?.P) {
     Object.assign(window.IrinaVFX.P, {
       fill: currentTheme.card,
@@ -254,6 +547,9 @@ function applyTheme(t, save = true) {
       sfx: [currentTheme.ink, currentTheme.card],
     });
   }
+  shapeToggle.setAttribute('aria-pressed', String(sharp));
+  shapeToggle.textContent = sharp ? 'Shape: Sharp Manga' : 'Shape: Rounded Classic';
+
   for (const { key } of SWATCHES) {
     const inp = swatchGrid.querySelector(`[data-key="${key}"]`);
     if (inp) {
@@ -263,7 +559,7 @@ function applyTheme(t, save = true) {
   }
   for (const btn of themeBar.querySelectorAll('[data-preset]')) {
     const p = PRESETS.find((x) => x.id === btn.dataset.preset);
-    const match = p && SWATCHES.every(({ key }) => p.colors[key].toLowerCase() === currentTheme[key].toLowerCase());
+    const match = p && SWATCHES.every(({ key }) => p.colors[key].toLowerCase() === currentTheme[key].toLowerCase()) && p.colors.sharp === sharp;
     btn.setAttribute('aria-pressed', String(!!match));
   }
   if (save) {
@@ -299,13 +595,21 @@ customizerToggle.addEventListener('click', () => {
   customizerToggle.setAttribute('aria-pressed', String(open));
 });
 
+shapeToggle.addEventListener('click', () => {
+  themeMsg.textContent = '';
+  applyTheme({ ...currentTheme, sharp: !currentTheme.sharp });
+});
+
 document.getElementById('themeReset').addEventListener('click', () => {
-  themeMsg.textContent = 'Reset to default';
+  themeMsg.textContent = 'Reset to Manga Ink';
   applyTheme(DEFAULT_THEME);
 });
 
 document.getElementById('themeCopy').addEventListener('click', async () => {
-  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-ink: ${currentTheme.ink};\n  --ir-pri-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n}\n\n<script>\nObject.assign(window.IrinaVFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\n<\/script>`;
+  const sharp = currentTheme.sharp !== false;
+  const rad = sharp ? '2px' : '15px';
+  const sh = sharp ? `5px 5px 0 ${currentTheme.ink}` : `6px 7px 0 ${currentTheme.soft}`;
+  const snippet = `:root {\n  --ir-acc: ${currentTheme.acc};\n  --ir-pri: ${currentTheme.pri};\n  --ir-on-pri: ${currentTheme.onPri || '#fffdf7'};\n  --ir-pri-ink: ${currentTheme.onPri || '#fffdf7'};\n  --ir-ink: ${currentTheme.ink};\n  --ir-soft: ${currentTheme.soft};\n  --ir-card: ${currentTheme.card};\n  --ir-r: ${rad};\n  --ir-sh: ${sh};\n}\n\n<script>\nObject.assign(window.IrinaVFX.P, {\n  fill: '${currentTheme.card}',\n  shade: '${currentTheme.soft}',\n  line: '${currentTheme.line}',\n  accent: '${currentTheme.acc}',\n  ink: '${currentTheme.ink}',\n  sfx: ['${currentTheme.ink}', '${currentTheme.card}'],\n});\nwindow.IrinaVFX.mangaTone = ${!!window.IrinaVFX?.mangaTone};\nwindow.IrinaVFX.stepped = ${!!window.IrinaVFX?.stepped};\n<\/script>`;
   let ok = false;
   try { await navigator.clipboard.writeText(snippet); ok = true; } catch {
     const t = Object.assign(document.createElement('textarea'), { value: snippet });
@@ -323,15 +627,16 @@ try {
 }
 
 const grid = document.getElementById('grid');
-for (const it of ITEMS) {
+ITEMS.forEach((it, idx) => {
   const card = document.createElement('section'); card.className = 'card' + (it.wide ? ' wide' : '');
-  card.innerHTML = `<h2>${it.name}<span>&lt;${it.tag}&gt;</span></h2><p class="how">${it.how}</p><div class="stage">${it.html}</div><p class="said" aria-live="polite"></p>
-    <div class="acts"><a class="pill" href="../${it.id}/">Docs and demo</a><button class="pill" type="button" data-copy="cmd">Copy install</button><button class="pill" type="button" data-copy="prompt">Copy a prompt for your agent</button></div>`;
+  const koma = String(idx + 1).padStart(2, '0');
+  card.innerHTML = `<div class="card-head"><h2>${it.name}<span>&lt;${it.tag}&gt;</span></h2><span class="koma-no">P.${koma}</span></div><p class="how">${it.how}</p><div class="stage">${it.html}</div><p class="said" aria-live="polite"></p>
+    <div class="acts"><a class="pill" href="../${it.id}/">Docs and demo</a><button class="pill" type="button" data-copy="cmd">Copy install</button><button class="pill" type="button" data-copy="prompt">Copy agent prompt</button></div>`;
   const said = card.querySelector('.said');
   card.querySelector('[data-copy=cmd]').addEventListener('click', (e) => copy(`npx shadcn add ${REPO}/${it.id}`, e.currentTarget, said));
   card.querySelector('[data-copy=prompt]').addEventListener('click', (e) => copy(prompt(it), e.currentTarget, said));
   grid.append(card);
-  const el = card.querySelector(it.tag), say = (t) => { said.textContent = t; };   // the one line under each control that says what happened
+  const el = card.querySelector(it.tag), say = (t) => { said.textContent = t; };
   if (it.tag === 'irina-button' && el.dataset.demo === 'primary') el.addEventListener('click', () => { say('Clicked'); setTimeout(() => el.done(), 760); });
   else if (it.tag === 'irina-button') el.addEventListener('click', () => say('Clicked'));
   else if (it.tag === 'irina-toast') card.querySelector('[data-demo=save]').addEventListener('click', () => el.show('Saved successfully!'));
@@ -342,8 +647,8 @@ for (const it of ITEMS) {
   else if (it.tag === 'irina-progress') el.addEventListener('irina:done', () => say('irina:done'));
   else if (it.tag === 'irina-tabs') el.addEventListener('change', (e) => say(`Tab: ${e.detail.label}`));
   else el.addEventListener('change', () => say(`change: ${it.tag === 'irina-toggle' || it.tag === 'irina-checkbox' ? (el.checked ? 'on' : 'off') : el.value}`));
-}
-// Copying needs the clipboard API, which plain http (other than localhost) does not have, so fall back to a selected textarea.
+});
+
 async function copy(text, btn, said) {
   let ok = false;
   try { await navigator.clipboard.writeText(text); ok = true; } catch {
